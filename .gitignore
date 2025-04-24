@@ -1,0 +1,1 @@
+*.iml\n.gradle/\n.idea/\nbuild/\napp/build/\n*.apk\n.DS_Store\nThumbs.db
