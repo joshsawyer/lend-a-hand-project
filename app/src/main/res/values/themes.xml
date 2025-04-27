@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LendAHand" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Theme.LendAHand" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Kill ripple highlight -->
+        <item name="colorControlHighlight">@android:color/transparent</item>
+
+        <!-- (Optional) If you want even better consistency: -->
+        <item name="rippleColor">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.LendAHand" parent="Base.Theme.LendAHand" />
 </resources>
