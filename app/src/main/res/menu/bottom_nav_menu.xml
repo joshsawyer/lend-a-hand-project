@@ -8,10 +8,10 @@
         android:title="Home" />
 
 
-    <item
-        android:id="@+id/nav_search"
-        android:icon="@drawable/search"
-        android:title="Search" />
+<!--    <item-->
+<!--        android:id="@+id/nav_search"-->
+<!--        android:icon="@drawable/search"-->
+<!--        android:title="Search" />-->
 
     <item
         android:id="@+id/nav_profile"
@@ -22,7 +22,4 @@
         android:id="@+id/nav_leaderboard"
         android:icon="@drawable/leaderboard"
         android:title="Leaderboard" />
-
-
-
 </menu>

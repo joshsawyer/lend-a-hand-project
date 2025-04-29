@@ -1,6 +1,8 @@
 package com.example.lendahand;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,6 +18,8 @@ public class DonateActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donate);
 
+        setupBottomNavigation();
+
         // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -23,7 +27,7 @@ public class DonateActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Donate");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
@@ -39,5 +43,10 @@ public class DonateActivity extends BaseActivity {
         DonationItemAdapter adapter = new DonationItemAdapter(donationList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+
+        Spinner itemSpinner = findViewById(R.id.itemSpinner);
+        String[] items = {"Tinned Fish", "Blankets", "Canned Beans", "Water", "Toiletries"};
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        itemSpinner.setAdapter(spinnerAdapter);
     }
 }

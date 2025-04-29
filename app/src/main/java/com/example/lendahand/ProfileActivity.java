@@ -26,6 +26,9 @@ public class ProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        setupBottomNavigation();
+        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
+
         // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -1,7 +1,10 @@
 package com.example.lendahand;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import com.example.lendahand.BaseActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 import java.util.ArrayList;
 
@@ -22,18 +26,19 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Find the toolbar
+        setupBottomNavigation();
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+
+        // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Home");
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Home"); // Set the title you want
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Show back button
+            getSupportActionBar().setTitle("Home");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
-        // Make the back button actually go back
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
 
@@ -44,8 +49,15 @@ public class HomeActivity extends BaseActivity {
         userArrayList.add(new User("John Doe", 5, 30));
         userArrayList.add(new User("Pravesh", 5, 10));
 
+        UserAdapter userAdapter = new UserAdapter(userArrayList, user -> {
+            // Example action: go to ProfileActivity
+            Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
+            intent.putExtra("username", user.getName());
+            startActivity(intent);
+        });
+
         // we are initializing our adapter class and passing our arraylist to it.
-        UserAdapter userAdapter = new UserAdapter(userArrayList);
+
 
         // below line is for setting a layout manager for our recycler view.
         // here we are creating vertical list so we will provide orientation as vertical
@@ -54,6 +66,7 @@ public class HomeActivity extends BaseActivity {
         // in below two lines we are setting layoutmanager and adapter to our recycler view.
         courseRV.setLayoutManager(linearLayoutManager);
         courseRV.setAdapter(userAdapter);
+
 
     }
 }

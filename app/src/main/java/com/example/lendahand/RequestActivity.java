@@ -22,7 +22,7 @@ public class RequestActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Request");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());

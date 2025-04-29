@@ -18,12 +18,16 @@ public class LeaderboardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
+        setupBottomNavigation();
+        bottomNavigationView.setSelectedItemId(R.id.nav_leaderboard);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Top Donators");
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Top Donators");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
