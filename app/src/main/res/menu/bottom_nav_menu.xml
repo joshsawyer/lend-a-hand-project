@@ -18,4 +18,11 @@
         android:icon="@drawable/user"
         android:title="Profile" />
 
+    <item
+        android:id="@+id/nav_leaderboard"
+        android:icon="@drawable/leaderboard"
+        android:title="Leaderboard" />
+
+
+
 </menu>

@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.appcompat.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/topAppBar"
+    android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="?attr/actionBarSize"
+    android:layout_height="?attr/actionBarSize"
     android:background="#FFFFFF"
     android:elevation="4dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Light"
     app:titleTextColor="#000000"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    app:title="Donate" />
+    android:fontFamily="@font/inter"
+    app:navigationIcon="@drawable/ic_back">
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Home"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:fontFamily="@font/inter"
+        android:textAlignment="center"/>
+</androidx.appcompat.widget.Toolbar>

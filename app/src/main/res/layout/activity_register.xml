@@ -7,6 +7,12 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <include
+        layout="@layout/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <EditText
         android:id="@+id/emailInput2"
         android:layout_width="0dp"
