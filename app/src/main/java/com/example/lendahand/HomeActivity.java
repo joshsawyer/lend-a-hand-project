@@ -2,19 +2,8 @@ package com.example.lendahand;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.lendahand.BaseActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,14 +31,12 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
 
 
-        ArrayList<User> userList = new ArrayList<>();
-
-        Button b = findViewById(R.id.button);
+        ArrayList<HomeItem> homeItemList = new ArrayList<>();
 
 
         /*CONNECTING TO SERVER*/
         OkHttpClient client = new OkHttpClient();
-        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_requests.php";
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_homeitem.php";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -72,26 +59,26 @@ public class HomeActivity extends BaseActivity {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
-                            String fullName = obj.getString("User_FName") + " " + obj.getString("User_LName");
-                            int amount = obj.getInt("Amount_Requested");
-                            int resourceID = obj.getInt("Resource_ID");
+                            String fullName = obj.getString("Full_Name");
+                            int amountRequested = obj.getInt("Amount_Requested");
                             int requestID = obj.getInt("Request_ID");
                             String resourceName = obj.getString("Resource_Name");
-                            String requestBio = obj.getString("Request_Bio");
+                            String userID = obj.getString("User_ID");
+                            int percentReceived = obj.getInt("Percentage_Received");
 
-                            userList.add(new User(fullName, amount, 0));/*, resourceID, requestID, resourceName, requestBio));*/
+                            homeItemList.add(new HomeItem(fullName, amountRequested, percentReceived, userID, resourceName, requestID));/*, resourceID, requestID, resourceName, requestBio));*/
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/
                             RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
-                            UserAdapter userAdapter = new UserAdapter(userList, user -> {
+                            HomeAdaptor userAdapter = new HomeAdaptor(homeItemList, homeItem -> {
                                 /*When a user is clicked this goes to DonateActivity where the user's name will be sent to that activity*/
                                 Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
-                                intent.putExtra("username", user.getName());
-                                intent.putExtra("amount", user.getAmountRequested());
-                                intent.putExtra("resource", user.getResourceName());
-                                intent.putExtra("bio", user.getRequestBio());
-                                intent.putExtra("requestID", user.getRequestID());
+                                intent.putExtra("userID", homeItem.getUserID());
+                                intent.putExtra("fullName", homeItem.getFullName());
+                                intent.putExtra("amount", homeItem.getAmountRequested());
+                                intent.putExtra("resource", homeItem.getResourceName());
+                                intent.putExtra("requestID", homeItem.getRequestID());
                                 startActivity(intent);
                             });
 

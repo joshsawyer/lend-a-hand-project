@@ -23,7 +23,8 @@ $sql = "
         r.Amount_Requested,
         r.Request_Bio,
         r.Date_Requested,
-        r.Resource_ID
+        r.Resource_ID,
+        r.Amount_Received
     FROM request r
     JOIN login l ON r.User_ID = l.User_ID
     JOIN resources res ON r.Resource_ID = res.Resource_ID

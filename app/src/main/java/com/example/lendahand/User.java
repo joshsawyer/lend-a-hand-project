@@ -2,46 +2,24 @@ package com.example.lendahand;
 
 //Please feel free to alter anything here this is just a basic setup for the user class so I can get the GUI working
 public class User {
-    private String name;
-    private int itemsRequested;
-    private int progress; //percentage points for items requested
-    private int resourceID;
-    private int requestID;
-    private String resourceName;
-    private String requestBio;
-    private int amountRequested;
-    //constructor
-    public User(String name, int itemsRequested, int progress){/*, int resourceID,int requestID, String resourceName, String requestBio){*/
-        this.name = name;
-        this.itemsRequested = itemsRequested;
-        this.progress = progress;
-        this.resourceID = resourceID;
-        this.requestID = requestID;
-        this.resourceName = resourceName;
-        this.requestBio = requestBio;
+    private String userID;
+    private String userBio;
+    private int totalDonated;
+    private int totalReceived;
 
+    public User(String userID, String userBio, int totalDonated, int totalReceived) {
+        this.userID = userID;
+        this.userBio = userBio;
+        this.totalDonated = totalDonated;
+        this.totalReceived = totalReceived;
     }
 
-    public String getName(){
-        return name;
-    }
-
-    public int getItemsRequested(){
-        return itemsRequested;
-    }
-
-    public int getProgress(){
-        return progress;
-    }
-    public int getResourceID(){return resourceID;}
-
-    public int getRequestID() {return requestID;}
-
-    public String getResourceName() {return resourceName;}
-
-    public String getRequestBio() {return requestBio;}
-
-    public int getAmountRequested() {return 5;}
-
-
+    public String getUserID() { return userID; }
+    public void setUserID(String userID) { this.userID = userID; }
+    public String getUserBio() { return userBio; }
+    public void setUserBio(String userBio) { this.userBio = userBio; }
+    public int getTotalDonated() { return totalDonated; }
+    public void setTotalDonated(int totalDonated) { this.totalDonated = totalDonated; }
+    public int getTotalReceived() { return totalReceived; }
+    public void setTotalReceived(int totalReceived) { this.totalReceived = totalReceived; }
 }
