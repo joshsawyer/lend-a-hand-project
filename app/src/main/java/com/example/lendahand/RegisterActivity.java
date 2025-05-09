@@ -19,27 +19,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private Button registerButton;
-    OkHttpClient client;
-    String postUrl = "https://lamp.ms.wits.ac.za/home/s2864063/Register.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        TextView title = findViewById(R.id.appTitle);
 
-        client = new OkHttpClient();
 
         EditText user_Name, user_Email, user_Password, user_Number, user_ID;
         user_Name = findViewById(R.id.usernameInput);
@@ -83,12 +72,10 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
 
-            if(!isValidID(ID)){
+            if(!isValidID(ID)) {
                 Toast.makeText(this, "Please enter a valid South African ID", Toast.LENGTH_LONG).show();
                 return;
             }
-
-            post(Name, Email, Password, Number, ID, title);
 
             // all valid
             Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
@@ -149,42 +136,5 @@ public class RegisterActivity extends AppCompatActivity {
         if(day > 31) return false;
 
         return true;
-    }
-    // function to be called when submit button is pressed and user_info is validated
-    // it makes a post request to the DB
-    // currently app works but I can't log the response from php file to see if
-    // server side stuff works properly
-    public void post(String name, String email, String passwd, String cellNo, String id, TextView title) {
-        RequestBody requestBody = new FormBody.Builder()
-                .add("Name", name)
-                .add("Email", email)
-                .add("Password", passwd)
-                .add("Number", cellNo)
-                .add("ID", id)
-                .build();
-        Request request = new Request.Builder().url(postUrl).post(requestBody).build();
-
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException{
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String responseText = response.body().string();
-                            Log.d("REGISTER_RESPONSE", responseText);
-                        } catch (IOException e) {
-                            Log.e("REGISTER_ERROR", "Failed to read response", e);
-                        }
-                    }
-                });
-            }
-        });
     }
 }
