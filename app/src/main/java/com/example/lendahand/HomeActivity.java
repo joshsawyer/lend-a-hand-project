@@ -1,7 +1,10 @@
 package com.example.lendahand;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
+import android.widget.SearchView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,15 +28,13 @@ public class HomeActivity extends BaseActivity {
 
     ArrayList<HomeItem> homeItemList = new ArrayList<>();
     private HomeAdaptor userAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-
-
-
 
         /*CONNECTING TO SERVER*/
         OkHttpClient client = new OkHttpClient();
@@ -79,9 +80,25 @@ public class HomeActivity extends BaseActivity {
 
                                 startActivity(intent);
                             });
+                            SearchView searchView = findViewById(R.id.searchBar);
+                            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                @Override
+                                public boolean onQueryTextSubmit(String query) {
+                                    fetchFilteredData(query);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onQueryTextChange(String newText) {
+                                    fetchFilteredData(newText);
+                                    return false;
+                                }
+                            });
+
 
                             courseRV.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
                             courseRV.setAdapter(userAdapter);
+                            
                         });
 
                     } catch (JSONException e) {
@@ -105,33 +122,58 @@ public class HomeActivity extends BaseActivity {
         }
 
 
-//        RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
-//
-//        // Here, we have created new array list and added data to it
-////        ArrayList<User> userArrayList = new ArrayList<User>();
-////        userArrayList.add(new User("Kurt Wagner", 7, 43));
-////        userArrayList.add(new User("John Cena", 5, 70));
-////        userArrayList.add(new User("John Doe", 5, 30));
-////        userArrayList.add(new User("Pravesh", 5, 10));
-//
-//        UserAdapter userAdapter = new UserAdapter(userList, user -> {
-//            // Example action: go to ProfileActivity
-//            Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
-//            intent.putExtra("username", user.getName());
-//            startActivity(intent);
-//        });
-//
-//        // we are initializing our adapter class and passing our arraylist to it.
-//
-//
-//        // below line is for setting a layout manager for our recycler view.
-//        // here we are creating vertical list so we will provide orientation as vertical
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//
-//        // in below two lines we are setting layoutmanager and adapter to our recycler view.
-//        courseRV.setLayoutManager(linearLayoutManager);
-//        courseRV.setAdapter(userAdapter);
-//
 
+
+
+    }
+
+    private void fetchFilteredData(String searchQuery) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "https://lamp.ms.wits.ac.za/~s2864063/get_users_summary_home.php?search=" + Uri.encode(searchQuery);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(HomeActivity.this, "Error loading data", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseData = response.body().string();
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseData);
+
+                        // Update the data list
+                        homeItemList.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject obj = jsonArray.getJSONObject(i);
+                            String userID = obj.getString("User_ID");
+                            String fullName = obj.getString("Full_Name");
+                            int totalRequested = obj.getInt("Total_Requested");
+                            int totalReceived = obj.getInt("Total_Received");
+                            int percentReceived = (totalRequested == 0) ? 0 : (totalReceived * 100 / totalRequested);
+
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID));
+                        }
+
+                        // Refresh the RecyclerView on the UI thread
+                        runOnUiThread(() -> userAdapter.notifyDataSetChanged());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }
