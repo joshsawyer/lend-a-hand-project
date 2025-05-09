@@ -60,13 +60,11 @@ public class HomeActivity extends BaseActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
                             String fullName = obj.getString("Full_Name");
-                            int amountRequested = obj.getInt("Amount_Requested");
-                            int requestID = obj.getInt("Request_ID");
-                            String resourceName = obj.getString("Resource_Name");
+                            int amountRequested = obj.getInt("Total_Requested");
                             String userID = obj.getString("User_ID");
                             int percentReceived = obj.getInt("Percentage_Received");
 
-                            homeItemList.add(new HomeItem(fullName, amountRequested, percentReceived, userID, resourceName, requestID));/*, resourceID, requestID, resourceName, requestBio));*/
+                            homeItemList.add(new HomeItem(fullName, amountRequested, percentReceived, userID));
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/
@@ -76,9 +74,7 @@ public class HomeActivity extends BaseActivity {
                                 Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
                                 intent.putExtra("userID", homeItem.getUserID());
                                 intent.putExtra("fullName", homeItem.getFullName());
-                                intent.putExtra("amount", homeItem.getAmountRequested());
-                                intent.putExtra("resource", homeItem.getResourceName());
-                                intent.putExtra("requestID", homeItem.getRequestID());
+
                                 startActivity(intent);
                             });
 
