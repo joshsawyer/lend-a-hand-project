@@ -23,7 +23,8 @@ import org.json.JSONObject;
 
 public class HomeActivity extends BaseActivity {
 
-
+    ArrayList<HomeItem> homeItemList = new ArrayList<>();
+    private HomeAdaptor userAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -31,12 +32,12 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
 
 
-        ArrayList<HomeItem> homeItemList = new ArrayList<>();
+
 
 
         /*CONNECTING TO SERVER*/
         OkHttpClient client = new OkHttpClient();
-        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_homeitem.php";
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_users_summary_home.php";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -59,33 +60,30 @@ public class HomeActivity extends BaseActivity {
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
-                            String fullName = obj.getString("Full_Name");
-                            int amountRequested = obj.getInt("Amount_Requested");
-                            int requestID = obj.getInt("Request_ID");
-                            String resourceName = obj.getString("Resource_Name");
                             String userID = obj.getString("User_ID");
-                            int percentReceived = obj.getInt("Percentage_Received");
+                            String fullName = obj.getString("Full_Name");
+                            int totalRequested = obj.getInt("Total_Requested");
+                            int totalReceived = obj.getInt("Total_Received");
+                            int percentReceived = (totalReceived*100/totalRequested);
 
-                            homeItemList.add(new HomeItem(fullName, amountRequested, percentReceived, userID, resourceName, requestID));/*, resourceID, requestID, resourceName, requestBio));*/
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID));
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/
                             RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
-                            HomeAdaptor userAdapter = new HomeAdaptor(homeItemList, homeItem -> {
+                            userAdapter = new HomeAdaptor(homeItemList, homeItem -> {
                                 /*When a user is clicked this goes to DonateActivity where the user's name will be sent to that activity*/
                                 Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
                                 intent.putExtra("userID", homeItem.getUserID());
                                 intent.putExtra("fullName", homeItem.getFullName());
-                                intent.putExtra("amount", homeItem.getAmountRequested());
-                                intent.putExtra("resource", homeItem.getResourceName());
-                                intent.putExtra("requestID", homeItem.getRequestID());
+
                                 startActivity(intent);
                             });
 
                             courseRV.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
                             courseRV.setAdapter(userAdapter);
                         });
-//
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
