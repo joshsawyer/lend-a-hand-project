@@ -10,11 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.w3c.dom.Text;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
 public class LoginActivity extends AppCompatActivity {
 
     private Button loginButton;
     private TextView signUpLink;  // This will be the clickable link for sign-up
-
+    private  TextView user_Email,user_Password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.continueButton);
         signUpLink = findViewById(R.id.signUpLink);
 
-        TextView user_Email,user_Password;
 
         user_Email = findViewById(R.id.emailInput);
         user_Password = findViewById(R.id.passwordInput);
@@ -78,5 +82,17 @@ public class LoginActivity extends AppCompatActivity {
                 password.matches(".*[a-z].*") &&
                 password.matches(".*\\d.*") &&
                 password.matches(".*[!@#$%^&*()].*");
+    }
+
+    public void login(String email, String password){
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = new FormBody.Builder()
+                .add("email", email)
+                .add("password", password)
+                .build();
+
+        /*Request request = new Request.Builder()
+                .url()*/
     }
 }

@@ -1,5 +1,6 @@
 package com.example.lendahand;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -8,21 +9,29 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private Button registerButton;
-
+    private EditText user_Name, user_Email, user_Password, user_Number, user_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        EditText user_Name, user_Email, user_Password, user_Number, user_ID;
         user_Name = findViewById(R.id.usernameInput);
         user_Email = findViewById(R.id.emailInput2);
         user_Password = findViewById(R.id.passwordInput);
@@ -63,19 +72,14 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            /*if (ID.length() != 13) {
-                Toast.makeText(this, "ID number must be exactly 13 digits", Toast.LENGTH_SHORT).show();
-                return;
-            }*/
             if(!isValidID(ID)){
                 Toast.makeText(this, "Please enter a valid South African ID", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // all valid
-            Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+            //if all fields are valid the allow user to register
+            registerUser(Name, Email, Password, Number, ID);
+
         });
     }
 
@@ -130,5 +134,63 @@ public class RegisterActivity extends AppCompatActivity {
         if(day > 31) return false;
 
         return true;
+    }
+
+    public void registerUser(String name, String email, String password, String number, String ID){
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = new FormBody.Builder()
+                .add("Name", name)
+                .add("Email", email)
+                .add("Password", password)
+                .add("Number", number)
+                .add("ID", ID)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("https://lamp.ms.wits.ac.za/home/s2809967/Register.php")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseText = response.body().string();
+                    RegisterActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (responseText.equalsIgnoreCase("You have successfully registered")) {
+                                Toast.makeText(RegisterActivity.this, responseText, Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(0, 0);
+                            }
+                        }
+                    });
+                }
+
+                else {
+                    RegisterActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(RegisterActivity.this,"something went wrong", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            public void onFailure(Call call, IOException e) {
+
+                e.printStackTrace();
+                RegisterActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(RegisterActivity.this, "Network error", Toast.LENGTH_LONG).show();
+                    }
+                }
+                );
+            }
+        });
+
     }
 }
