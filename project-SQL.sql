@@ -80,3 +80,21 @@ INSERT INTO request (User_ID, Resource_ID, Amount_Requested, Amount_Received, Re
 ('9912123456789', 1, 3, 0, 'I need food assistance this week.'),
 ('0210101123456', 2, 1, 0, 'Need airtime to apply for jobs.'),
 ('0210101123456', 3, 1, 0, 'Need baby formula for my newborn.');
+
+
+
+
+INSERT INTO request (User_ID, Resource_ID, Amount_Requested, Request_Bio)
+VALUES 
+('9201011234081', 1, 10, 'Need blankets for winter.'),
+('8507074567082', 2, 15, 'Requesting sanitary pads for local schoolgirls.'),
+('0112318765089', 3, 20, 'Stationery needed for tutoring group.'),
+('9201011234081', 2, 5, 'Extra canned food for distribution.'),
+('0112318765089', 1, 7, 'Warm jackets for community shelter.');
+
+INSERT INTO resources (Resource_Name)
+VALUES ('Blankets'), ('Sanitary Pads'), ('Stationery'), ('Canned Food'), ('Jackets');
+
+
+UPDATE request
+SET Amount_Received = FLOOR(RAND() * (Amount_Requested + 1));
