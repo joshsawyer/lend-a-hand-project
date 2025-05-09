@@ -3,6 +3,7 @@ package com.example.lendahand;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +20,19 @@ public class DonateActivity extends BaseActivity {
         setContentView(R.layout.activity_donate);
 
         setupBottomNavigation();
+        /*getting the user data after a request was clicked on*/
+        String name = getIntent().getStringExtra("username");
+        String resource = getIntent().getStringExtra("resource");
+        String bio = getIntent().getStringExtra("bio");
+        int amount = getIntent().getIntExtra("amount", 0);
+        int requestID = getIntent().getIntExtra("requestID", -1);
+
+
+        TextView nameView = findViewById(R.id.requestorName);
+        TextView bioView = findViewById(R.id.bioText);
+        nameView.setText(name);
+        bioView.setText(bio);
+
 
         // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);

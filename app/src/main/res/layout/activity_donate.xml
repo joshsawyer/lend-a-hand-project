@@ -59,7 +59,7 @@
                             android:scaleType="centerCrop" />
 
                         <TextView
-                            android:id="@+id/nameText"
+                            android:id="@+id/requestorName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Kurt Wagner"
@@ -136,5 +136,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-v
+
 </androidx.constraintlayout.widget.ConstraintLayout>

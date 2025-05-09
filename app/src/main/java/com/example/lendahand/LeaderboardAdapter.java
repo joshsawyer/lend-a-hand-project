@@ -64,7 +64,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.nameText);
+            nameText = itemView.findViewById(R.id.requestorName);
             scoreText = itemView.findViewById(R.id.scoreText);
             rankText = itemView.findViewById(R.id.rankText);
             avatarIcon = itemView.findViewById(R.id.avatarIcon);
