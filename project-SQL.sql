@@ -69,3 +69,8 @@ INSERT INTO donation (User_ID, Resource_ID, Amount_Donated) VALUES
 INSERT INTO request (User_ID, Resource_ID, Amount_Requested, Request_Bio) VALUES
 ('8507074567082', 1, 5, 'Looking for tinned food for my children.'),
 ('8507074567082', 3, 2, 'Need baby formula urgently.');
+
+
+
+ALTER TABLE request
+ADD Amount_Received INT DEFAULT 0;
