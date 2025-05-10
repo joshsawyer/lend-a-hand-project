@@ -72,7 +72,8 @@ public class LeaderboardActivity extends BaseActivity {
                             JSONObject obj = jsonArray.getJSONObject(i);
                             String fullName = obj.getString("fullName");
                             int amount = obj.getInt("totalDonated");
-                            leaderboardList.add(new UserScore(fullName, amount));
+                            String avatarUrl = obj.getString("avatarUrl");
+                            leaderboardList.add(new UserScore(fullName, amount, avatarUrl));
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/

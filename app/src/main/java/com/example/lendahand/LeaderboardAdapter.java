@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.ViewHolder> {
@@ -34,6 +36,12 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         holder.nameText.setText(user.name);
         holder.scoreText.setText(String.valueOf(user.score));
         holder.rankText.setText(String.valueOf(position + 1));
+
+        Glide.with(holder.itemView.getContext())
+                .load(user.getAvatarUrl())
+                .circleCrop()
+                .into(holder.avatarIcon);
+
 
         // Set background color based on position
         switch (position) {
