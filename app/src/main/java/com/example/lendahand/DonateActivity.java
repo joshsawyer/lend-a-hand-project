@@ -111,21 +111,5 @@ public class DonateActivity extends BaseActivity {
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-//        // Setup RecyclerView
-//        RecyclerView recyclerView = findViewById(R.id.requestedItemsRecyclerView);
-//
-//        ArrayList<DonationItem> donationList = new ArrayList<>();
-//        donationList.add(new DonationItem("Blankets", 7, 3, "I went hungry for a week. no food only stompted on sweets from the floor."));
-//        donationList.add(new DonationItem("Tinned Fish", 10, 4,"I went hungry for a week. no food only stompted on sweets from the floor."));
-//        donationList.add(new DonationItem("Canned Beans", 5, 1,"I went hungry for a week. no food only stompted on sweets from the floor."));
-//
-//        DonationItemAdapter adapter = new DonationItemAdapter(donationList);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        recyclerView.setAdapter(adapter);
-//
-//        Spinner itemSpinner = findViewById(R.id.itemSpinner);
-//        String[] items = {"Tinned Fish", "Blankets", "Canned Beans", "Water", "Toiletries"};
-//        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-//        itemSpinner.setAdapter(spinnerAdapter);
     }
 }
