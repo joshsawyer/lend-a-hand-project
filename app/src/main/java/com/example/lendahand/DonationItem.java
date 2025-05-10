@@ -2,12 +2,15 @@ package com.example.lendahand;
 public class DonationItem {
     private String itemName;
     private int requested;
-    private int current;
+    private int received;
 
-    public DonationItem(String itemName, int requested, int current) {
+    private String requestBio;
+
+    public DonationItem(String itemName, int requested, int received, String requestBio) {
         this.itemName = itemName;
         this.requested = requested;
-        this.current = current;
+        this.received = received;
+        this.requestBio = requestBio;
     }
 
     public String getItemName() {
@@ -18,7 +21,11 @@ public class DonationItem {
         return requested;
     }
 
-    public int getCurrent() {
-        return current;
+    public int getReceived() {
+        return received;
+    }
+
+    public String getRequestBio() {
+        return requestBio;
     }
 }

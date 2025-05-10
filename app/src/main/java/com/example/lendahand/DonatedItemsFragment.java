@@ -28,8 +28,8 @@ public class DonatedItemsFragment extends Fragment {
 
         // Dummy data
         donatedItems = new ArrayList<>();
-        donatedItems.add(new DonationItem("Blankets", 5, 5));
-        donatedItems.add(new DonationItem("Water Bottles", 10, 10));
+        donatedItems.add(new DonationItem("Blankets", 5, 5, "I went hungry for a week. no food only stompted on sweets from the floor."));
+        donatedItems.add(new DonationItem("Water Bottles", 10, 10, "I went hungry for a week. no food only stompted on sweets from the floor."));
 
         adapter = new DonationItemAdapter(donatedItems);
         recyclerView.setAdapter(adapter);

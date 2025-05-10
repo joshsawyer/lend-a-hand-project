@@ -19,15 +19,15 @@ $sql = "
         SUM(r.Amount_Received) AS Total_Received
     FROM request r
     JOIN user u ON r.User_ID = u.User_ID
-    WHERE r.Amount_Received < r.Amount_Requested
 ";
 
 if (!empty($search)) {
-    $sql .= " AND CONCAT(u.User_FName, ' ', u.User_LName) LIKE '$search%'";
+    $sql .= " WHERE CONCAT(u.User_FName, ' ', u.User_LName) LIKE '$search%'";
 }
 
 $sql .= " GROUP BY u.User_ID
-          ORDER BY u.User_FName";
+        HAVING Total_Received < Total_Requested
+        ORDER BY u.User_FName";
 
 $result = $conn->query($sql);
 

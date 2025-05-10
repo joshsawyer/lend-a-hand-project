@@ -122,7 +122,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/requestedItemsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="312dp"
+                android:layout_height="243dp"
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
     </ScrollView>

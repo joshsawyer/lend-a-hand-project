@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="12dp">
 
@@ -19,19 +19,19 @@
             android:id="@+id/itemName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
             android:text="Blankets"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/inter" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/requestInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
             android:text="7 Requested"
-            android:textSize="14sp"
             android:textColor="#777"
-            android:fontFamily="@font/inter" />
+            android:textSize="14sp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -42,5 +42,15 @@
             android:max="7"
             android:progress="3"
             android:progressTint="#2196F3" />
+
+        <TextView
+            android:id="@+id/requestBio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/inter"
+            android:text="I went hungry for a week. no food only stompted on sweets from the floor."
+            android:textColor="#777"
+            android:textSize="14sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
