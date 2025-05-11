@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                     LoginActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(LoginActivity.this,"something went wrong", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this,"something went wrong ", Toast.LENGTH_LONG).show();
                         }
                     });
                 }

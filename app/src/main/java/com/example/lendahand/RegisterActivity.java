@@ -199,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
                     RegisterActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(RegisterActivity.this, "something went wrong", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterActivity.this, "Something went wrong ", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
