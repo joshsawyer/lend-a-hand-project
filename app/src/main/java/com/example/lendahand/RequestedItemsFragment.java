@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class RequestedItemsFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private DonationItemAdapter adapter;
-    private ArrayList<DonationItem> requestedItems;
+    private RequestItemAdapter adapter;
+    private ArrayList<RequestItem> requestedItems;
 
     @Nullable
     @Override
@@ -28,10 +28,10 @@ public class RequestedItemsFragment extends Fragment {
 
         // Dummy data
         requestedItems = new ArrayList<>();
-        requestedItems.add(new DonationItem("Canned Beans", 5, 1, "I went hungry for a week. no food only stompted on sweets from the floor."));
-        requestedItems.add(new DonationItem("Tinned Fish", 7, 2, "I went hungry for a week. no food only stompted on sweets from the floor."));
+        requestedItems.add(new RequestItem("Canned Beans", 5, 1, "I went hungry for a week. no food only stompted on sweets from the floor."));
+        requestedItems.add(new RequestItem("Tinned Fish", 7, 2, "I went hungry for a week. no food only stompted on sweets from the floor."));
 
-        adapter = new DonationItemAdapter(requestedItems);
+        adapter = new RequestItemAdapter(requestedItems);
         recyclerView.setAdapter(adapter);
 
         return view;

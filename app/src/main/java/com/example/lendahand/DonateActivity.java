@@ -2,6 +2,7 @@ package com.example.lendahand;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -55,7 +56,7 @@ public class DonateActivity extends BaseActivity {
                         String userBio = jsonObject.getString("User_Bio");
                         JSONArray requestArray = jsonObject.getJSONArray("Requests");
 
-                        ArrayList<DonationItem>  donationList = new ArrayList<>();
+                        ArrayList<RequestItem>  requestList = new ArrayList<>();
 
                         for (int i = 0; i < requestArray.length(); i++){
                             JSONObject requestObject = requestArray.getJSONObject(i);
@@ -66,15 +67,14 @@ public class DonateActivity extends BaseActivity {
                             String requestBio = requestObject.getString("Request_Bio");
                             String dateRequested = requestObject.getString("Date_Requested");
 
-                            donationList.add(new DonationItem(resourceName, amountRequested, amountReceived, requestBio));
+                            requestList.add(new RequestItem(resourceName, amountRequested, amountReceived, requestBio));
 
                         }
                         runOnUiThread(() -> {
-                            TextView bioView = findViewById(R.id.bioText); // Add this view in your XML
+                            TextView bioView = findViewById(R.id.bioText);
                             bioView.setText(userBio);
-
                             RecyclerView recyclerView = findViewById(R.id.requestedItemsRecyclerView);
-                            DonationItemAdapter adapter = new DonationItemAdapter(donationList);
+                            RequestItemAdapter adapter = new RequestItemAdapter(requestList);
                             recyclerView.setLayoutManager(new LinearLayoutManager(DonateActivity.this));
                             recyclerView.setAdapter(adapter);
                         });

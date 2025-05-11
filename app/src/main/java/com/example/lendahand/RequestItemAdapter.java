@@ -19,15 +19,15 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView itemName, requestInfo, requestBio;
+        TextView itemName, requestInfo, userRecieved;
         ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.itemName);
-            requestInfo = itemView.findViewById(R.id.requestInfo);
+            requestInfo = itemView.findViewById(R.id.DonationInfo);
             progressBar = itemView.findViewById(R.id.progressBar);
-            requestBio = itemView.findViewById(R.id.requestBio);
+            userRecieved = itemView.findViewById(R.id.userRecieved);
         }
     }
 
@@ -35,7 +35,7 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
     @Override
     public RequestItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.donation_item_card, parent, false);
+                .inflate(R.layout.request_item_card, parent, false);
         return new RequestItemAdapter.ViewHolder(v);
     }
 
@@ -46,7 +46,7 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
         holder.requestInfo.setText(item.getRequested() + " Requested");
         holder.progressBar.setMax(item.getRequested());
         holder.progressBar.setProgress(item.getReceived());
-        holder.requestBio.setText(item.getRequestBio());
+        holder.userRecieved.setText(item.getRequestBio());
     }
 
     @Override

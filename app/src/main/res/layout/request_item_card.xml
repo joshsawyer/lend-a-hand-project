@@ -25,7 +25,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/requestInfo"
+            android:id="@+id/DonationInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
@@ -44,7 +44,17 @@
             android:progressTint="#2196F3" />
 
         <TextView
-            android:id="@+id/requestBio"
+            android:id="@+id/dateRequested"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/inter"
+            android:text="on 29-2-2023"
+            android:textColor="#777"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/userRecieved"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
