@@ -14,11 +14,16 @@ $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : 
 $sql = "
     SELECT
         u.User_ID,
+        u.User_Bio,
         CONCAT(u.User_FName, ' ', u.User_LName) AS Full_Name,
-        SUM(r.Amount_Requested) AS Total_Requested,
-        SUM(r.Amount_Received) AS Total_Received
-    FROM request r
-    JOIN user u ON r.User_ID = u.User_ID
+        SUM(filtered.Amount_Requested) AS Total_Requested,
+        SUM(filtered.Amount_Received) AS Total_Received
+    FROM (
+        SELECT *
+        FROM request
+        WHERE Amount_Requested > Amount_Received
+    ) AS filtered
+    JOIN user u ON filtered.User_ID = u.User_ID
 ";
 
 if (!empty($search)) {
@@ -26,8 +31,7 @@ if (!empty($search)) {
 }
 
 $sql .= " GROUP BY u.User_ID
-        HAVING Total_Received < Total_Requested
-        ORDER BY u.User_FName";
+          ORDER BY u.User_FName";
 
 $result = $conn->query($sql);
 

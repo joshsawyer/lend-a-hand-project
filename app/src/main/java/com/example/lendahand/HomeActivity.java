@@ -1,12 +1,18 @@
 package com.example.lendahand;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +41,7 @@ public class HomeActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
 
         /*CONNECTING TO SERVER*/
         OkHttpClient client = new OkHttpClient();
@@ -66,8 +73,9 @@ public class HomeActivity extends BaseActivity {
                             int totalRequested = obj.getInt("Total_Requested");
                             int totalReceived = obj.getInt("Total_Received");
                             int percentReceived = (totalReceived*100/totalRequested);
+                            String userBio = obj.getString("User_Bio");
 
-                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID));
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userBio));
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/
@@ -81,6 +89,7 @@ public class HomeActivity extends BaseActivity {
                                 startActivity(intent);
                             });
                             SearchView searchView = findViewById(R.id.searchBar);
+                            searchView.setQueryHint("Search");
                             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                 @Override
                                 public boolean onQueryTextSubmit(String query) {
@@ -92,6 +101,23 @@ public class HomeActivity extends BaseActivity {
                                 public boolean onQueryTextChange(String newText) {
                                     fetchFilteredData(newText);
                                     return false;
+                                }
+                            });
+                            /*Keeps searchbar expanded so te hitbox isn't just the icon*/
+                            searchView.setIconifiedByDefault(false);
+
+                            /*To see the search icon and searchbar text hint. makes them darker*/
+                            searchView.post(() -> {
+                                EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+                                if (searchEditText != null) {
+                                    searchEditText.setTextColor(Color.BLACK);
+
+                                    searchEditText.setTypeface(ResourcesCompat.getFont(HomeActivity.this, R.font.inter)); // Optional
+                                    ImageView searchIcon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+                                    searchIcon.setColorFilter(Color.GRAY); // Choose any visible color
+
+                                } else {
+                                    Toast.makeText(HomeActivity.this, "Search bar text field not found", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -162,8 +188,9 @@ public class HomeActivity extends BaseActivity {
                             int totalRequested = obj.getInt("Total_Requested");
                             int totalReceived = obj.getInt("Total_Received");
                             int percentReceived = (totalRequested == 0) ? 0 : (totalReceived * 100 / totalRequested);
+                            String userBio = obj.getString("User_Bio");
 
-                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID));
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userBio));
                         }
 
                         // Refresh the RecyclerView on the UI thread

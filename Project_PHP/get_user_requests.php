@@ -41,6 +41,7 @@ $requestQuery = "
 FROM request r
 JOIN resources res ON r.Resource_ID = res.Resource_ID
 WHERE r.User_ID = ?
+AND r.Amount_Requested > r.Amount_Received
 ORDER BY r.Date_Requested ASC;
 ";
 

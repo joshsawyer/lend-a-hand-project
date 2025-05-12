@@ -19,7 +19,7 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView itemName, requestInfo, userRecieved;
+        TextView itemName, requestInfo, userRecieved, dateRequested;
         ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
@@ -28,6 +28,7 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
             requestInfo = itemView.findViewById(R.id.DonationInfo);
             progressBar = itemView.findViewById(R.id.progressBar);
             userRecieved = itemView.findViewById(R.id.userRecieved);
+            dateRequested = itemView.findViewById(R.id.dateRequested);
         }
     }
 
@@ -43,10 +44,12 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
     public void onBindViewHolder(@NonNull RequestItemAdapter.ViewHolder holder, int position) {
         RequestItem item = requestItemList.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.requestInfo.setText(item.getRequested() + " Requested");
+        holder.requestInfo.setText(item.getRequested() + " Requested \n"+ (item.getRequested()-item.getReceived()) + " More Needed");
         holder.progressBar.setMax(item.getRequested());
         holder.progressBar.setProgress(item.getReceived());
         holder.userRecieved.setText(item.getRequestBio());
+        holder.dateRequested.setText("At " + item.getDateRequested());
+
     }
 
     @Override

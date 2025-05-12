@@ -41,6 +41,7 @@ public class HomeAdaptor extends RecyclerView.Adapter<HomeAdaptor.ViewHolder> {
         holder.nameTextView.setText(homeItem.getFullName());
         holder.itemsRequestedTextView.setText(homeItem.getAmountRequested() + " items requested");
         holder.progressBar.setProgress(homeItem.getPercentReceived());
+        holder.userCardBio.setText(homeItem.getUserBio());
 
         // Make entire card clickable
         holder.itemView.setOnClickListener(v -> {
@@ -60,12 +61,14 @@ public class HomeAdaptor extends RecyclerView.Adapter<HomeAdaptor.ViewHolder> {
         private final TextView nameTextView;
         private final TextView itemsRequestedTextView;
         private final ProgressBar progressBar;
+        private final TextView userCardBio;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
             itemsRequestedTextView = itemView.findViewById(R.id.itemsRequestedTextView);
             progressBar = itemView.findViewById(R.id.progressBar);
+            userCardBio = itemView.findViewById(R.id.PersonCardBio);
         }
     }
 }

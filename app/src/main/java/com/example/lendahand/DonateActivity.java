@@ -1,10 +1,15 @@
 package com.example.lendahand;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +30,8 @@ import okhttp3.Response;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DonateActivity extends BaseActivity {
 
@@ -57,6 +64,8 @@ public class DonateActivity extends BaseActivity {
                         JSONArray requestArray = jsonObject.getJSONArray("Requests");
 
                         ArrayList<RequestItem>  requestList = new ArrayList<>();
+                        ArrayList<String> itemNames = new ArrayList<>();
+                        Map<String, Integer> amountNeededMap = new HashMap<>();
 
                         for (int i = 0; i < requestArray.length(); i++){
                             JSONObject requestObject = requestArray.getJSONObject(i);
@@ -67,16 +76,52 @@ public class DonateActivity extends BaseActivity {
                             String requestBio = requestObject.getString("Request_Bio");
                             String dateRequested = requestObject.getString("Date_Requested");
 
-                            requestList.add(new RequestItem(resourceName, amountRequested, amountReceived, requestBio));
+                            requestList.add(new RequestItem(resourceName, amountRequested, amountReceived, requestBio, dateRequested));
+                            int amountStillNeeded = amountRequested - amountReceived;
+                            amountNeededMap.put(resourceName, amountStillNeeded);
+                            itemNames.add(resourceName);
+
 
                         }
                         runOnUiThread(() -> {
                             TextView bioView = findViewById(R.id.bioText);
                             bioView.setText(userBio);
+
                             RecyclerView recyclerView = findViewById(R.id.requestedItemsRecyclerView);
                             RequestItemAdapter adapter = new RequestItemAdapter(requestList);
                             recyclerView.setLayoutManager(new LinearLayoutManager(DonateActivity.this));
                             recyclerView.setAdapter(adapter);
+
+                            Spinner spinner = findViewById(R.id.itemSpinner);
+                            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(DonateActivity.this, android.R.layout.simple_spinner_item, itemNames);
+                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinner.setAdapter(spinnerAdapter);
+
+                            EditText amountInput = findViewById(R.id.amountInput);
+
+                            Button confirmButton = findViewById(R.id.confirmButton);
+                            confirmButton.setOnClickListener(v -> {
+                                String selectedItem = spinner.getSelectedItem().toString();
+                                int needed = amountNeededMap.get(selectedItem);
+
+                                String inputText = amountInput.getText().toString();
+                                if (inputText.isEmpty()) {
+                                    Toast.makeText(DonateActivity.this, "Please enter an amount.", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                int enteredAmount = Integer.parseInt(inputText);
+
+                                if (enteredAmount > needed) {
+                                    Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
+                                    amountInput.setText(""); // clear field
+                                } else {
+                                    // You can add actual donation logic here later
+                                    Toast.makeText(DonateActivity.this, "Thank you for your donation!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+
                         });
                     }
                     catch (JSONException e){
@@ -95,6 +140,7 @@ public class DonateActivity extends BaseActivity {
 
         TextView nameView = findViewById(R.id.requestorName);
         nameView.setText(name);
+
 
 
 

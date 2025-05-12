@@ -28,8 +28,8 @@ public class RequestedItemsFragment extends Fragment {
 
         // Dummy data
         requestedItems = new ArrayList<>();
-        requestedItems.add(new RequestItem("Canned Beans", 5, 1, "I went hungry for a week. no food only stompted on sweets from the floor."));
-        requestedItems.add(new RequestItem("Tinned Fish", 7, 2, "I went hungry for a week. no food only stompted on sweets from the floor."));
+        requestedItems.add(new RequestItem("Canned Beans", 5, 1, "I went hungry for a week. no food only stompted on sweets from the floor.", "26-12-2025"));
+        requestedItems.add(new RequestItem("Tinned Fish", 7, 2, "I went hungry for a week. no food only stompted on sweets from the floor.", "31-09-2023"));
 
         adapter = new RequestItemAdapter(requestedItems);
         recyclerView.setAdapter(adapter);
