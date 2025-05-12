@@ -1,5 +1,7 @@
 package com.example.lendahand;
 
+import static java.lang.String.valueOf;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,8 +25,10 @@ import org.json.JSONObject;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.io.IOException;
@@ -75,8 +79,9 @@ public class DonateActivity extends BaseActivity {
                             int amountReceived = requestObject.getInt("Amount_Received");
                             String requestBio = requestObject.getString("Request_Bio");
                             String dateRequested = requestObject.getString("Date_Requested");
+                            int requestID = requestObject.getInt("Request_ID");
 
-                            requestList.add(new RequestItem(resourceName, amountRequested, amountReceived, requestBio, dateRequested));
+                            requestList.add(new RequestItem(resourceName, amountRequested, amountReceived, requestBio, dateRequested, requestID));
                             int amountStillNeeded = amountRequested - amountReceived;
                             amountNeededMap.put(resourceName, amountStillNeeded);
                             itemNames.add(resourceName);
@@ -116,8 +121,52 @@ public class DonateActivity extends BaseActivity {
                                     Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                     amountInput.setText(""); // clear field
                                 } else {
-                                    // You can add actual donation logic here later
+//ENTER USER TRACKING MODE!
+
+                                    String donorID = "8507074567082";
+                                    //Here Thandi is the eternal Donor.
+                                    // But please replace her with the person using the app.
+                                    // Otherwise she'll have too much power!
+                                    //end user tracking mode
+
+                                    int requestID = 0;
+                                    for(int i = 0; i<requestList.size();i++) {
+                                        if(requestList.get(i).getItemName() == spinner.getSelectedItem().toString()) {
+                                            requestID = requestList.get(i).getRequestID();
+                                        }
+                                    }
+                                    RequestBody formBody = new FormBody.Builder()
+                                            .add("donor_id", donorID)
+                                            .add("request_id", valueOf(requestID))
+                                            .add("amount", valueOf(enteredAmount))
+                                            .build();
+
+                                    Request postRequest = new Request.Builder()
+                                            .url("https://lamp.ms.wits.ac.za/home/s2864063/submit_donation.php")
+                                            .post(formBody)
+                                            .build();
+
+                                    client.newCall(postRequest).enqueue(new Callback() {
+                                        @Override
+                                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                            String responseStr = response.body().string();
+                                            runOnUiThread(() -> {
+                                                Toast.makeText(DonateActivity.this, "Donation submitted!", Toast.LENGTH_SHORT).show();
+                                                // optionally refresh data here
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                                            e.printStackTrace();
+                                            runOnUiThread(() ->
+                                                    Toast.makeText(DonateActivity.this, "Failed to donate", Toast.LENGTH_SHORT).show()
+                                            );
+                                        }
+
+                                    });
                                     Toast.makeText(DonateActivity.this, "Thank you for your donation!", Toast.LENGTH_SHORT).show();
+
                                 }
                             });
 

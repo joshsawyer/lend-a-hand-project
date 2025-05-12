@@ -6,14 +6,16 @@ public class RequestItem {
     private int received;
     private String requestBio;
     private String dateRequested;
+    private int requestID;
 
 
-    public RequestItem(String itemName, int requested, int received, String requestBio, String dateRequested) {
+    public RequestItem(String itemName, int requested, int received, String requestBio, String dateRequested, int requestID) {
         this.itemName = itemName;
         this.requested = requested;
         this.received = received;
         this.requestBio = requestBio;
         this.dateRequested = dateRequested;
+        this.requestID = requestID;
     }
 
     public String getItemName() {
@@ -33,5 +35,7 @@ public class RequestItem {
     }
 
     public String getDateRequested(){return dateRequested;}
-
+    public int getRequestID() {
+        return requestID;
+    }
 }

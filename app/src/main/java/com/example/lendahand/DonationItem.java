@@ -6,6 +6,7 @@ public class DonationItem {
 
     private String date_donated;
 
+
     public DonationItem(String itemName, int amount, String received, String date_donated) {
         this.itemName = itemName;
         this.amount_donated = amount;
