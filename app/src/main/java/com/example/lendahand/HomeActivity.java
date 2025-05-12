@@ -1,9 +1,18 @@
 package com.example.lendahand;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+import androidx.appcompat.widget.SearchView;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,14 +34,13 @@ public class HomeActivity extends BaseActivity {
 
     ArrayList<HomeItem> homeItemList = new ArrayList<>();
     private HomeAdaptor userAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-
-
 
 
         /*CONNECTING TO SERVER*/
@@ -65,8 +73,9 @@ public class HomeActivity extends BaseActivity {
                             int totalRequested = obj.getInt("Total_Requested");
                             int totalReceived = obj.getInt("Total_Received");
                             int percentReceived = (totalReceived*100/totalRequested);
+                            String userBio = obj.getString("User_Bio");
 
-                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID));
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userBio));
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/
@@ -79,9 +88,43 @@ public class HomeActivity extends BaseActivity {
 
                                 startActivity(intent);
                             });
+                            SearchView searchView = findViewById(R.id.searchBar);
+                            searchView.setQueryHint("Search");
+                            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                @Override
+                                public boolean onQueryTextSubmit(String query) {
+                                    fetchFilteredData(query);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onQueryTextChange(String newText) {
+                                    fetchFilteredData(newText);
+                                    return false;
+                                }
+                            });
+                            /*Keeps searchbar expanded so te hitbox isn't just the icon*/
+                            searchView.setIconifiedByDefault(false);
+
+                            /*To see the search icon and searchbar text hint. makes them darker*/
+                            searchView.post(() -> {
+                                EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+                                if (searchEditText != null) {
+                                    searchEditText.setTextColor(Color.BLACK);
+
+                                    searchEditText.setTypeface(ResourcesCompat.getFont(HomeActivity.this, R.font.inter)); // Optional
+                                    ImageView searchIcon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+                                    searchIcon.setColorFilter(Color.GRAY); // Choose any visible color
+
+                                } else {
+                                    Toast.makeText(HomeActivity.this, "Search bar text field not found", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
 
                             courseRV.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
                             courseRV.setAdapter(userAdapter);
+                            
                         });
 
                     } catch (JSONException e) {
@@ -105,33 +148,59 @@ public class HomeActivity extends BaseActivity {
         }
 
 
-//        RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
-//
-//        // Here, we have created new array list and added data to it
-////        ArrayList<User> userArrayList = new ArrayList<User>();
-////        userArrayList.add(new User("Kurt Wagner", 7, 43));
-////        userArrayList.add(new User("John Cena", 5, 70));
-////        userArrayList.add(new User("John Doe", 5, 30));
-////        userArrayList.add(new User("Pravesh", 5, 10));
-//
-//        UserAdapter userAdapter = new UserAdapter(userList, user -> {
-//            // Example action: go to ProfileActivity
-//            Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
-//            intent.putExtra("username", user.getName());
-//            startActivity(intent);
-//        });
-//
-//        // we are initializing our adapter class and passing our arraylist to it.
-//
-//
-//        // below line is for setting a layout manager for our recycler view.
-//        // here we are creating vertical list so we will provide orientation as vertical
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//
-//        // in below two lines we are setting layoutmanager and adapter to our recycler view.
-//        courseRV.setLayoutManager(linearLayoutManager);
-//        courseRV.setAdapter(userAdapter);
-//
 
+
+
+    }
+
+    private void fetchFilteredData(String searchQuery) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = "https://lamp.ms.wits.ac.za/~s2864063/get_users_summary_home.php?search=" + Uri.encode(searchQuery);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(HomeActivity.this, "Error loading data", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseData = response.body().string();
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseData);
+
+                        // Update the data list
+                        homeItemList.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject obj = jsonArray.getJSONObject(i);
+                            String userID = obj.getString("User_ID");
+                            String fullName = obj.getString("Full_Name");
+                            int totalRequested = obj.getInt("Total_Requested");
+                            int totalReceived = obj.getInt("Total_Received");
+                            int percentReceived = (totalRequested == 0) ? 0 : (totalReceived * 100 / totalRequested);
+                            String userBio = obj.getString("User_Bio");
+
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userBio));
+                        }
+
+                        // Refresh the RecyclerView on the UI thread
+                        runOnUiThread(() -> userAdapter.notifyDataSetChanged());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }

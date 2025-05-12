@@ -1,24 +1,32 @@
 package com.example.lendahand;
 public class DonationItem {
     private String itemName;
-    private int requested;
-    private int current;
+    private int amount_donated;
+    private String user_received;
 
-    public DonationItem(String itemName, int requested, int current) {
+    private String date_donated;
+
+
+    public DonationItem(String itemName, int amount, String received, String date_donated) {
         this.itemName = itemName;
-        this.requested = requested;
-        this.current = current;
+        this.amount_donated = amount;
+        this.user_received = received;
+        this.date_donated = date_donated;
     }
 
     public String getItemName() {
         return itemName;
     }
 
-    public int getRequested() {
-        return requested;
+    public int getAmountDonated() {
+        return amount_donated;
     }
 
-    public int getCurrent() {
-        return current;
+    public String getUserReceived() {
+        return user_received;
+    }
+
+    public String getDateDonated() {
+        return date_donated;
     }
 }

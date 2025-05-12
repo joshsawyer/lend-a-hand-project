@@ -13,19 +13,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <EditText
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/searchBar"
-        android:layout_width="0dp"
+        android:layout_width="360dp"
         android:layout_height="50dp"
         android:layout_marginTop="96dp"
         android:background="@drawable/rounded_edittext"
         android:drawablePadding="12dp"
         android:fontFamily="@font/inter"
-        android:hint="Search"
+        android:queryHint="Search"
         android:padding="12dp"
         android:textColor="#000000"
         android:textColorHint="#999999"
         android:textSize="16sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,8 +36,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/donationsRecyclerView"
-        android:layout_width="404dp"
-        android:layout_height="508dp"
+                                               
+        android:layout_width="399dp"
+        android:layout_height="620dp"
+
         android:clipToPadding="false"
         android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"

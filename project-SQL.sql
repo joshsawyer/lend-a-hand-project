@@ -98,3 +98,23 @@ VALUES ('Blankets'), ('Sanitary Pads'), ('Stationery'), ('Canned Food'), ('Jacke
 
 UPDATE request
 SET Amount_Received = FLOOR(RAND() * (Amount_Requested + 1));
+CREATE TABLE request_donation (
+    RequestDonation_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Request_ID INT NOT NULL,
+    Donor_ID VARCHAR(13) NOT NULL,
+    Resource_ID INT NOT NULL,
+    Amount_Donated INT NOT NULL,
+    Date_Donated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (Request_ID) REFERENCES request(Request_ID),
+    FOREIGN KEY (Donor_ID) REFERENCES user(User_ID),
+    FOREIGN KEY (Resource_ID) REFERENCES resources(Resource_ID)
+);
+INSERT INTO request_donation (Request_ID, Donor_ID, Resource_ID, Amount_Donated)
+VALUES
+(1, '9201011234081', 1, 3),  -- John helps Thandi with tinned fish
+(2, '9201011234081', 3, 1),  -- John helps Thandi with baby formula
+(3, '9201011234081', 1, 2),  -- John helps Nomsa with food
+(5, '0112318765089', 3, 1),  -- Sipho helps Karabo with baby formula
+(7, '9201011234081', 6, 2),  -- John donates sanitary pads
+(8, '9201011234081', 4, 4),  -- John donates canned food
+(9, '0112318765089', 5, 3);  -- Sipho donates jackets

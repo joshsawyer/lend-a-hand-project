@@ -20,14 +20,13 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView itemName, requestInfo;
-        ProgressBar progressBar;
+        TextView itemName, requestInfo, requestBio;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.itemName);
-            requestInfo = itemView.findViewById(R.id.requestInfo);
-            progressBar = itemView.findViewById(R.id.progressBar);
+            requestInfo = itemView.findViewById(R.id.DonationInfo);
+            requestBio = itemView.findViewById(R.id.userRecieved);
         }
     }
 
@@ -43,9 +42,8 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DonationItem item = donationItemList.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.requestInfo.setText(item.getRequested() + " Requested");
-        holder.progressBar.setMax(item.getRequested());
-        holder.progressBar.setProgress(item.getCurrent());
+        holder.requestInfo.setText(item.getAmountDonated() + " Donated");
+        holder.requestBio.setText("Given to " + item.getUserReceived());
     }
 
     @Override
