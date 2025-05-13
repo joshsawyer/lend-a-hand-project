@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // Save user ID to SharedPreferences
                                 SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
                                 prefs.edit().putString("user_id", userId).apply();
-
+                                
                                 // Redirect to home screen
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 startActivity(intent);

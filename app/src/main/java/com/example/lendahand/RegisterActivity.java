@@ -3,11 +3,15 @@ package com.example.lendahand;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -95,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             // If all fields are valid, proceed to register the user
-            registerUser(FName, LName, Email, Password, Number, ID);
+            register(FName, LName, Email, Password, Number, ID);
         });
     }
 
@@ -156,62 +160,51 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // Function to send registration data to the server using OkHttp
-    public void registerUser(String FName, String LName, String email, String password, String number, String ID) {
-        OkHttpClient client = new OkHttpClient(); // Create OkHttpClient
+    public void register(String fname, String lname, String email, String password, String number, String id) {
+        OkHttpClient client = new OkHttpClient();
 
-        // Create the request body with registration data
-        RequestBody body = new FormBody.Builder()
-                .add("FName", FName)
-                .add("LName", LName)
+        RequestBody formBody = new FormBody.Builder()
+                .add("FName", fname)
+                .add("LName", lname)
                 .add("Email", email)
                 .add("Password", password)
                 .add("Number", number)
-                .add("ID", ID)
+                .add("ID", id)
                 .build();
 
-        // Build the POST request to send data to the server
         Request request = new Request.Builder()
-                .url("https://lamp.ms.wits.ac.za/home/s2809967/Register.php")
-                .post(body)
+                .url("https://lamp.ms.wits.ac.za/home/s2864063/Register.php")
+                .post(formBody)
                 .build();
 
-        // Make asynchronous HTTP request
         client.newCall(request).enqueue(new Callback() {
-
-            // Handle successful response from the server
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseText = response.body().string(); // Read response body as text
-                    RegisterActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Check response text for success message
-                            if (responseText.equalsIgnoreCase("You have successfully registered")) {
-                                Toast.makeText(RegisterActivity.this, responseText, Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(RegisterActivity.this, HomeActivity.class); // Navigate to HomeActivity
-                                startActivity(intent);
-                                overridePendingTransition(0, 0); // Remove transition animation
-                            }
-                        }
-                    });
-                } else {
-                    // Handle unsuccessful response
-                    RegisterActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(RegisterActivity.this, "Something went wrong ", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(RegisterActivity.this, "Network error", Toast.LENGTH_LONG).show()
+                );
             }
 
-            // Handle failure in making the HTTP request (e.g., network issues)
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace(); // Log error for debugging
-                RegisterActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(RegisterActivity.this, "Network error", Toast.LENGTH_LONG).show();
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String body = response.body().string();
+
+                Log.e("RegisterRaw", "Server response: " + body);
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject json = new JSONObject(body);
+                        String status = json.getString("status");
+
+                        if (status.equals("success")) {
+                            Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                            finish();
+                        } else {
+                            String message = json.optString("message", "Registration failed");
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Response error", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
