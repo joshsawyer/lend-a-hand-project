@@ -1,6 +1,7 @@
 package com.example.lendahand;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
@@ -28,6 +29,17 @@ public class LeaderboardActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
+
+        if (userId != "-1") {
+            // User is logged in
+        } else {
+            // No user found, maybe redirect to LoginActivity
+        }
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 

@@ -1,7 +1,9 @@
 package com.example.lendahand;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -89,72 +92,70 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Function to perform login using OkHttp (HTTP client)
-    public void login(String email, String password){
-        OkHttpClient client = new OkHttpClient(); // Create an OkHttp client instance
+    public void login(String email, String password) {
+        OkHttpClient client = new OkHttpClient();
 
-        // Create request body with email and password as POST data
+        // Create request body with email and password
         RequestBody body = new FormBody.Builder()
                 .add("Email", email)
                 .add("Password", password)
                 .build();
 
-        // Build POST request to PHP login script
+        // Build POST request to your PHP login script
         Request request = new Request.Builder()
-                .url("https://lamp.ms.wits.ac.za/home/s2809967/Login.php")
+                .url("https://lamp.ms.wits.ac.za/home/s2864063/Login.php")
                 .post(body)
                 .build();
 
-        // Make asynchronous HTTP call
         client.newCall(request).enqueue(new Callback() {
 
-            // If the request fails (e.g., no internet)
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                e.printStackTrace(); // Print error for debugging
-                LoginActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(LoginActivity.this, "Network error", Toast.LENGTH_LONG).show();
-                    }
-                });
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(LoginActivity.this, "Network error", Toast.LENGTH_LONG).show()
+                );
             }
 
-            // If response is received from the server
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.isSuccessful()){ // Check if response is HTTP 200 OK
-                    String responseBody = response.body().string(); // Read response as string
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    runOnUiThread(() -> {
+                        try {
 
-                    LoginActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Show specific messages based on response from PHP
-                            if (responseBody.equalsIgnoreCase("Wrong password")) {
-                                Toast.makeText(LoginActivity.this, responseBody, Toast.LENGTH_LONG).show();
-                            }
-                            else if (responseBody.equalsIgnoreCase("User not found")) {
-                                Toast.makeText(LoginActivity.this, responseBody, Toast.LENGTH_LONG).show();
-                            }
-                            else if (responseBody.equalsIgnoreCase("You have successfully logged in")){
-                                Toast.makeText(LoginActivity.this, responseBody, Toast.LENGTH_LONG).show();
+                            JSONObject json = new JSONObject(responseBody);
+                            String status = json.getString("status");
 
-                                // If login is successful, go to HomeActivity
+                            if (status.equals("success")) {
+                                String userId = json.getString("user_id");
+                                Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+
+                                // Save user ID to SharedPreferences
+                                SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
+                                prefs.edit().putString("user_id", userId).apply();
+
+                                // Redirect to home screen
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 startActivity(intent);
-                                overridePendingTransition(0, 0); // Remove transition animation
-                                finish(); // Close LoginActivity so it can't be returned to with the back button
+                                overridePendingTransition(0, 0);
+                                finish();
+
+                            } else {
+                                String message = json.optString("message", "Login failed");
+                                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(LoginActivity.this, "Error parsing server response", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }
-                else {
-                    // Handle failed HTTP response
-                    LoginActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(LoginActivity.this,"something went wrong ", Toast.LENGTH_LONG).show();
-                        }
-                    });
+
+                } else {
+                    runOnUiThread(() ->
+                            Toast.makeText(LoginActivity.this, "Server error", Toast.LENGTH_LONG).show()
+                    );
                 }
             }
         });
