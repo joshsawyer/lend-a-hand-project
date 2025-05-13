@@ -2,7 +2,9 @@ package com.example.lendahand;
 
 import static java.lang.String.valueOf;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,6 +43,16 @@ public class DonateActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
+
+        if (userId != "-1") {
+            // User is logged in
+        } else {
+            // No user found, maybe redirect to LoginActivity
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donate);
 
@@ -121,13 +133,11 @@ public class DonateActivity extends BaseActivity {
                                     Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                     amountInput.setText(""); // clear field
                                 } else {
-//ENTER USER TRACKING MODE!
-
-                                    String donorID = "8507074567082";
-                                    //Here Thandi is the eternal Donor.
-                                    // But please replace her with the person using the app.
-                                    // Otherwise she'll have too much power!
-                                    //end user tracking mode
+//ENTER USER TRACKING MODE
+//                                    //Here Thandi is the eternal Donor.
+//                                    // But please replace her with the person using the app.
+//                                    // Otherwise she'll have too much power!
+//                                    //end user tracking mode
 
                                     int requestID = 0;
                                     for(int i = 0; i<requestList.size();i++) {
@@ -135,8 +145,11 @@ public class DonateActivity extends BaseActivity {
                                             requestID = requestList.get(i).getRequestID();
                                         }
                                     }
+
+                                    Log.d("DONOR_ID", "Donating as user: " + userId);
+
                                     RequestBody formBody = new FormBody.Builder()
-                                            .add("donor_id", donorID)
+                                            .add("donor_id", String.valueOf(userId))
                                             .add("request_id", valueOf(requestID))
                                             .add("amount", valueOf(enteredAmount))
                                             .build();
