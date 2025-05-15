@@ -29,9 +29,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
-            android:text="7 Donated"
+            android:text="7 Requested"
             android:textColor="#777"
             android:textSize="14sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_marginTop="6dp"
+            android:max="7"
+            android:progress="3"
+            android:progressTint="#2196F3" />
+
+        <TextView
+            android:id="@+id/dateRequested"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/inter"
+            android:text="on 29-2-2023"
+            android:textColor="#777"
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/userRecieved"
@@ -39,17 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:fontFamily="@font/inter"
-            android:text="to Thandi Tgogo"
-            android:textColor="#777"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/donationDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:fontFamily="@font/inter"
-            android:text="on 26-11-2025 14:16"
+            android:text="I went hungry for a week. no food only stompted on sweets from the floor."
             android:textColor="#777"
             android:textSize="14sp" />
     </LinearLayout>

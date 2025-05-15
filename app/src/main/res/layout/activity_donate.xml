@@ -59,7 +59,7 @@
                             android:scaleType="centerCrop" />
 
                         <TextView
-                            android:id="@+id/nameText"
+                            android:id="@+id/requestorName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Kurt Wagner"
@@ -93,8 +93,9 @@
                     <Spinner
                         android:id="@+id/itemSpinner"
                         android:layout_width="match_parent"
-                        android:layout_height="38dp"
-                        android:layout_marginTop="12dp" />
+                        android:layout_height="40dp"
+                        android:layout_marginTop="10dp"
+                         />
 
                     <Button
                         android:id="@+id/confirmButton"
@@ -122,7 +123,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/requestedItemsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="312dp"
+                android:layout_height="243dp"
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
     </ScrollView>
@@ -136,5 +137,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-v
+
 </androidx.constraintlayout.widget.ConstraintLayout>

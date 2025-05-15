@@ -1,140 +1,213 @@
 package com.example.lendahand;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.mindrot.jbcrypt.BCrypt;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private Button registerButton;
+    private Button registerButton;  // Button to trigger registration
+    private EditText user_FName, user_LName, user_Email, user_Password, user_Number, user_ID; // Fields to input user data
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_register); // Set layout for Register Activity
 
-
-        EditText user_Name, user_Email, user_Password, user_Number, user_ID;
-        user_Name = findViewById(R.id.usernameInput);
+        // Initialize the input fields and button by finding them in the layout
+        user_FName = findViewById(R.id.usernameInput);
+        user_LName = findViewById(R.id.lNameInput);
         user_Email = findViewById(R.id.emailInput2);
         user_Password = findViewById(R.id.passwordInput);
         user_Number = findViewById(R.id.contactNo);
         user_ID = findViewById(R.id.idNo);
 
-        registerButton = findViewById(R.id.submitButton);
+        registerButton = findViewById(R.id.submitButton); // Register button initialization
 
+        // Set up an onClickListener for the register button
         registerButton.setOnClickListener(v -> {
-            String Name = user_Name.getText().toString().trim();
+            // Get input values from the EditText fields
+            String FName = user_FName.getText().toString().trim();
+            String LName = user_LName.getText().toString().trim();
             String Email = user_Email.getText().toString().trim();
             String Password = user_Password.getText().toString().trim();
             String Number = user_Number.getText().toString().trim();
             String ID = user_ID.getText().toString().trim();
 
-            if (Name.isEmpty() || Email.isEmpty() || Password.isEmpty() || Number.isEmpty() || ID.isEmpty()) {
+            // Check if any field is empty
+            if (FName.isEmpty() || LName.isEmpty() || Email.isEmpty() || Password.isEmpty() || Number.isEmpty() || ID.isEmpty()) {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            if (Name.length() < 3 || !isValidName(Name)) {
-                Toast.makeText(this, "Sorry, Name must be at least 4 characters and only contain letters, spaces, or hyphens", Toast.LENGTH_LONG).show();
+            // Validate first name (should only contain letters)
+            if (!isValidFName(FName)) {
+                Toast.makeText(this, "Sorry, first name must only contain letters ", Toast.LENGTH_LONG).show();
                 return;
             }
 
+            // Validate last name (should only contain letters)
+            if (!isValidLName(LName)) {
+                Toast.makeText(this, "Sorry, last name must only contain letters", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            // Validate email format
             if (!isValidEmail(Email)) {
                 Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_LONG).show();
                 return;
             }
 
+            // Validate password (must be at least 8 characters, include uppercase, number & special character)
             if (Password.length() < 8 || !isValidPassword(Password)) {
-                Toast.makeText(this, "Password must be 8+ characters and include upper, lower, number & special character", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Password must be 8+ characters and include atleast 1 UPPERCASE, NUMBER & SPECIAL CHARACTER", Toast.LENGTH_LONG).show();
                 return;
             }
 
+            // Validate phone number (must be a 10-digit number starting with 06, 07, or 08)
             if (!isValidNumber(Number)) {
                 Toast.makeText(this, "Please enter a valid 10-digit phone number starting with 06, 07, or 08", Toast.LENGTH_LONG).show();
                 return;
             }
 
-
-            if(!isValidID(ID)) {
+            // Validate South African ID number
+            if (!isValidID(ID)) {
                 Toast.makeText(this, "Please enter a valid South African ID", Toast.LENGTH_LONG).show();
                 return;
             }
 
-            // all valid
-            Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+            // If all fields are valid, proceed to register the user
+            register(FName, LName, Email, Password, Number, ID);
         });
     }
 
-
+    // Function to validate email format using regular expression
     public boolean isValidEmail(String email) {
         return email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     }
 
+    // Function to validate password strength (length, uppercase, number, special character)
     public boolean isValidPassword(String password) {
         return password.length() >= 8 &&
-                password.matches(".*[A-Z].*") &&
-                password.matches(".*[a-z].*") &&
-                password.matches(".*\\d.*") &&
-                password.matches(".*[!@#$%^&*()].*");
+                password.matches(".*[A-Z].*") &&    // At least one uppercase letter
+                password.matches(".*[a-z].*") &&    // At least one lowercase letter
+                password.matches(".*\\d.*") &&      // At least one digit
+                password.matches(".*[!@#$%^&*()].*"); // At least one special character
     }
 
-    public boolean isValidName(String name) {
-        return name.matches("^[A-Za-z]+([ '-][A-Za-z]+)*$");
+    // Function to validate first name (should contain only letters)
+    public boolean isValidFName(String fname) {
+        return fname.matches("^[A-Za-z]+$");
     }
 
-    public boolean isValidNumber(String number){
-        char firstNo = number.charAt(0);
+    // Function to validate last name (should contain only letters)
+    public boolean isValidLName(String lname) {
+        return lname.matches("^[A-Za-z]+$");
+    }
+
+    // Function to validate phone number (should be 10 digits, starting with 06, 07, or 08)
+    public boolean isValidNumber(String number) {
         return number.matches("^0[6-8][0-9]{8}$");
     }
 
-    public boolean isValidID(String ID){
-        if(ID.length() != 13) return false;
-        if(!ID.matches("\\d+")) return false;
-        String DOB = ID.substring(0,6);
-        int gender = Integer.parseInt(ID.substring(6, 10));
-        int citizenship = Integer.parseInt(ID.substring(10, 11));
+    // Function to validate South African ID number
+    public boolean isValidID(String ID) {
+        if (ID.length() != 13) return false; // ID must be 13 digits long
+        if (!ID.matches("\\d+")) return false; // ID must be numeric
 
-        if(!isValidDate(DOB)) return false;
+        String DOB = ID.substring(0, 6); // Date of Birth (YYMMDD)
+        int gender = Integer.parseInt(ID.substring(6, 10)); // Gender (codes from 0000 to 9999)
+        int citizenship = Integer.parseInt(ID.substring(10, 11)); // Citizenship (0 = South African, 1 = Permanent resident)
 
-        if(gender > 9999) return false;
-
-        if (citizenship == 0 || citizenship == 1) {
-            return true;
-        } else {
-            return false;
-        }
-
+        if (!isValidDate(DOB)) return false; // Validate date
+        if (gender > 9999) return false; // Gender code must be less than or equal to 9999
+        return citizenship == 0 || citizenship == 1; // Citizenship must be 0 or 1
     }
 
-    public boolean isValidDate(String DOB){
-        int year,month,day,gender,Citizenship;
-        year = Integer.parseInt(DOB.substring(0,2));
-        month = Integer.parseInt(DOB.substring(2,4));
-        day = Integer.parseInt(DOB.substring(4,6));
+    // Function to validate the date part of the South African ID (YYMMDD)
+    public boolean isValidDate(String DOB) {
+        int year = Integer.parseInt(DOB.substring(0, 2));
+        int month = Integer.parseInt(DOB.substring(2, 4));
+        int day = Integer.parseInt(DOB.substring(4, 6));
 
-        if(year > 25) return false;
-        if(month > 12) return false;
-        if(day > 31) return false;
-
+        // Validate if the date is a valid calendar date
+        if (year > 25) return false; // Year must be less than or equal to 25 (for 2000-2025)
+        if (month > 12) return false; // Month must be between 1 and 12
+        if (day > 31) return false; // Day must be between 1 and 31
         return true;
+    }
+
+    // Function to send registration data to the server using OkHttp
+    public void register(String fname, String lname, String email, String password, String number, String id) {
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("FName", fname)
+                .add("LName", lname)
+                .add("Email", email)
+                .add("Password", password)
+                .add("Number", number)
+                .add("ID", id)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("https://lamp.ms.wits.ac.za/home/s2864063/Register.php")
+                .post(formBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(RegisterActivity.this, "Network error", Toast.LENGTH_LONG).show()
+                );
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String body = response.body().string();
+
+                Log.e("RegisterRaw", "Server response: " + body);
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject json = new JSONObject(body);
+                        String status = json.getString("status");
+
+                        if (status.equals("success")) {
+                            Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                            finish();
+                        } else {
+                            String message = json.optString("message", "Registration failed");
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Response error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 }

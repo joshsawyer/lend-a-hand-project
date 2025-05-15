@@ -12,47 +12,48 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 // Adapter to connect item_person_card to RecyclerView
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
+public class HomeAdaptor extends RecyclerView.Adapter<HomeAdaptor.ViewHolder> {
 
-    private final ArrayList<User> userList;
+    private final ArrayList<HomeItem> homeItemList;
     private final OnUserClickListener listener;
 
     // Listener interface for clicks
     public interface OnUserClickListener {
-        void onUserClick(User user);
+        void onUserClick(HomeItem homeItem);
     }
 
     // Adapter constructor with click listener
-    public UserAdapter(ArrayList<User> userList, OnUserClickListener listener) {
-        this.userList = userList;
+    public HomeAdaptor(ArrayList<HomeItem> homeItemList, OnUserClickListener listener) {
+        this.homeItemList = homeItemList;
         this.listener = listener;
     }
 
     @NonNull
     @Override
-    public UserAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HomeAdaptor.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_person_card, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserAdapter.ViewHolder holder, int position) {
-        User user = userList.get(position);
-        holder.nameTextView.setText(user.getName());
-        holder.itemsRequestedTextView.setText(user.getItemsRequested() + " items requested");
-        holder.progressBar.setProgress(user.getProgress());
+    public void onBindViewHolder(@NonNull HomeAdaptor.ViewHolder holder, int position) {
+        HomeItem homeItem = homeItemList.get(position);
+        holder.nameTextView.setText(homeItem.getFullName());
+        holder.itemsRequestedTextView.setText(homeItem.getAmountRequested() + " items requested");
+        holder.progressBar.setProgress(homeItem.getPercentReceived());
+        holder.userCardBio.setText(homeItem.getUserBio());
 
         // Make entire card clickable
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onUserClick(user);
+                listener.onUserClick(homeItem);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return homeItemList.size();
     }
 
     // ViewHolder for the card views
@@ -60,12 +61,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         private final TextView nameTextView;
         private final TextView itemsRequestedTextView;
         private final ProgressBar progressBar;
+        private final TextView userCardBio;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.nameTextView);
             itemsRequestedTextView = itemView.findViewById(R.id.itemsRequestedTextView);
             progressBar = itemView.findViewById(R.id.progressBar);
+            userCardBio = itemView.findViewById(R.id.PersonCardBio);
         }
     }
 }
