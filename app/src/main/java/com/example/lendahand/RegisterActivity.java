@@ -2,14 +2,20 @@ package com.example.lendahand;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import org.json.JSONObject;
 
@@ -17,6 +23,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,6 +36,8 @@ import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private Spinner locationSpinner;
+    private String selectedLocation = "";
     private Button registerButton;  // Button to trigger registration
     private EditText user_FName, user_LName, user_Email, user_Password, user_Number, user_ID; // Fields to input user data
 
@@ -36,6 +46,18 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register); // Set layout for Register Activity
 
+        // Setup toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Sign Up");
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Sign Up");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+
         // Initialize the input fields and button by finding them in the layout
         user_FName = findViewById(R.id.usernameInput);
         user_LName = findViewById(R.id.lNameInput);
@@ -43,8 +65,35 @@ public class RegisterActivity extends AppCompatActivity {
         user_Password = findViewById(R.id.passwordInput);
         user_Number = findViewById(R.id.contactNo);
         user_ID = findViewById(R.id.idNo);
-
+        locationSpinner = findViewById(R.id.locationSpinner);
         registerButton = findViewById(R.id.submitButton); // Register button initialization
+
+        /* Populate the spinner */
+        List<String> locations = Arrays.asList(
+                "Select Location","Johannesburg", "Pretoria", "Cape Town", "Durban",
+                "Gqeberha (Port Elizabeth)", "Bloemfontein", "East London",
+                "Kimberley", "Polokwane", "Mthatha", "Nelspruit (Mbombela)",
+                "Rustenburg", "Pietermaritzburg", "George", "Mahikeng",
+                "Upington", "Welkom"
+        );
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+
+                android.R.layout.simple_spinner_item,
+                locations
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locationSpinner.setAdapter(adapter);
+
+        /* Keep track of what the user picks */
+        locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                selectedLocation = parent.getItemAtPosition(pos).toString();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) { selectedLocation = ""; }
+        });
 
         // Set up an onClickListener for the register button
         registerButton.setOnClickListener(v -> {
@@ -55,9 +104,12 @@ public class RegisterActivity extends AppCompatActivity {
             String Password = user_Password.getText().toString().trim();
             String Number = user_Number.getText().toString().trim();
             String ID = user_ID.getText().toString().trim();
+            locationSpinner = findViewById(R.id.locationSpinner);
+
+
 
             // Check if any field is empty
-            if (FName.isEmpty() || LName.isEmpty() || Email.isEmpty() || Password.isEmpty() || Number.isEmpty() || ID.isEmpty()) {
+            if (FName.isEmpty() || LName.isEmpty() || Email.isEmpty() || Password.isEmpty() || Number.isEmpty() || ID.isEmpty() || selectedLocation.equals("Select Location")) {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -98,8 +150,9 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+
             // If all fields are valid, proceed to register the user
-            register(FName, LName, Email, Password, Number, ID);
+            register(FName, LName, Email, Password, Number, ID, selectedLocation);
         });
     }
 
@@ -160,7 +213,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // Function to send registration data to the server using OkHttp
-    public void register(String fname, String lname, String email, String password, String number, String id) {
+    public void register(String fname, String lname, String email, String password, String number, String id, String location) {
         OkHttpClient client = new OkHttpClient();
 
         RequestBody formBody = new FormBody.Builder()
@@ -170,6 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .add("Password", password)
                 .add("Number", number)
                 .add("ID", id)
+                .add("Location", location)
                 .build();
 
         Request request = new Request.Builder()
