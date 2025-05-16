@@ -69,16 +69,25 @@
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/bioText"
+                        android:id="@+id/LocationText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="I recently lost my job and I am struggling to make ends meet. Any help would be greatly appreciated."
-                        android:textSize="14sp"
+                        android:fontFamily="@font/inter"
+                        android:text="Lives in Joburg"
                         android:textColor="#555"
-                        android:fontFamily="@font/inter" />
+                        android:textSize="14sp" />
 
                     <!-- Amount Input -->
+                    <TextView
+                        android:id="@+id/phoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Phone Number: 0721569345"
+                        android:textColor="#555"
+                        android:textSize="14sp" />
+
                     <EditText
                         android:id="@+id/amountInput"
                         android:layout_width="match_parent"
