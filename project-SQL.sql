@@ -12,7 +12,9 @@ CREATE TABLE user (
     User_FName VARCHAR(100) NOT NULL,
     User_LName VARCHAR(100) NOT NULL,
     User_Email VARCHAR(100) NOT NULL,
-    User_Phone VARCHAR(15) NOT NULL
+    User_Phone VARCHAR(15) NOT NULL,
+    Avatar_URL VARCHAR(255),
+    User_Location VARCHAR(100)
 );
 
 CREATE TABLE login (
