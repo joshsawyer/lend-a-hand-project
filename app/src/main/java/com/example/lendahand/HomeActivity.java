@@ -156,11 +156,6 @@ public class HomeActivity extends BaseActivity {
             getSupportActionBar().setTitle("Home");
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
-
-
-
-
-
     }
 
     private void fetchFilteredData(String searchQuery) {
