@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -32,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // 👈 FORCE light mode
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login); // Sets the layout of the activity
 
