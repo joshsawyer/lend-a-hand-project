@@ -173,7 +173,7 @@ public class RegisterActivity extends AppCompatActivity {
     // Function to validate first name (should contain only letters)
     public boolean isValidFName(String fname) {
         return fname.matches("^[A-Za-z]+$");
-    }
+    } 
 
     // Function to validate last name (should contain only letters)
     public boolean isValidLName(String lname) {
