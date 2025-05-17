@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,11 +18,24 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttp;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import okhttp3.Request;
+
 public class ProfileActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private Button requestItemButton;
+    private OkHttpClient client = new OkHttpClient();
+    TextView userName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,15 +43,22 @@ public class ProfileActivity extends BaseActivity {
         SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
         String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
 
-        if (userId != "-1") {
+        if (!userId.equals("-1")) {
             // User is logged in
+            // You can stay on the current activity or load user data
         } else {
-            // No user found, maybe redirect to LoginActivity
+            // No user found, redirect to LoginActivity
+            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // Optional: prevent returning to this activity
         }
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        userName = findViewById(R.id.username);
+
+        fetchUserInfo(userId);
 
         setupBottomNavigation();
         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
@@ -59,7 +81,7 @@ public class ProfileActivity extends BaseActivity {
         requestItemButton = findViewById(R.id.requestItemButton);
 
         // Set up ViewPager2 adapter
-        viewPager.setAdapter(new ProfilePagerAdapter(this));
+        viewPager.setAdapter(new ProfilePagerAdapter(this, userId));
 
         // Attach TabLayout to ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -76,18 +98,30 @@ public class ProfileActivity extends BaseActivity {
 
     // Pager Adapter for tabs
     private static class ProfilePagerAdapter extends FragmentStateAdapter {
-        public ProfilePagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+
+        private final String userId;
+        public ProfilePagerAdapter(@NonNull FragmentActivity fragmentActivity, String userId) {
             super(fragmentActivity);
+            this.userId = userId;
         }
 
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            Fragment fragment;
             if (position == 0) {
-                return new DonatedItemsFragment();
+                //return new DonatedItemsFragment();
+                fragment = new DonatedItemsFragment();
             } else {
-                return new RequestedItemsFragment();
+                //return new RequestedItemsFragment();
+                fragment = new RequestedItemsFragment();
             }
+
+            Bundle args = new Bundle();
+            args.putString("userId", userId);
+            fragment.setArguments(args);
+
+            return fragment;
         }
 
         @Override
@@ -95,4 +129,53 @@ public class ProfileActivity extends BaseActivity {
             return 2;
         }
     }
+        private void fetchUserInfo(String userId) {
+            String url = "https://lamp.ms.wits.ac.za/home/s2663454/profile.php?userId="+userId;
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+
+            // 2. Make async GET request
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // Handle request failure on UI thread
+                    runOnUiThread(() ->
+                            Toast.makeText(ProfileActivity.this, "Failed to fetch user info", Toast.LENGTH_SHORT).show()
+                    );
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String jsonString = response.body().string();
+
+                        try {
+                            // 3. Parse JSON response
+                            JSONObject json = new JSONObject(jsonString);
+                            String fname = json.getString("User_FName");
+                            String lname = json.getString("User_LName");
+                            String fullName = fname + " " + lname;
+
+                            // 4. Update UI on main thread
+                            runOnUiThread(() -> {
+                                userName.setText(fullName);
+                            });
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            runOnUiThread(() ->
+                                    Toast.makeText(ProfileActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show()
+                            );
+                        }
+                    } else {
+                        runOnUiThread(() ->
+                                Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
+                        );
+                    }
+                }
+            });
+        }
+
 }
