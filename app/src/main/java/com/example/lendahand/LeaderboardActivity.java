@@ -1,9 +1,11 @@
 package com.example.lendahand;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import androidx.appcompat.widget.SearchView;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,19 +28,16 @@ public class LeaderboardActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private LeaderboardAdapter adapter;
     private ArrayList<UserScore> leaderboardList;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
-        String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
+        String userId = prefs.getString("user_id", "-1");
 
-        if (userId != "-1") {
-            // User is logged in
-        } else {
-            // No user found, maybe redirect to LoginActivity
+        if (userId.equals("-1")) {
+            // TODO: Redirect if needed
         }
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
@@ -56,65 +55,76 @@ public class LeaderboardActivity extends BaseActivity {
         }
 
         leaderboardList = new ArrayList<>();
+        recyclerView = findViewById(R.id.leaderboardRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new LeaderboardAdapter(leaderboardList);
+        recyclerView.setAdapter(adapter);
 
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        searchView = findViewById(R.id.searchBar);
+        searchView.setQueryHint("Search");
+        searchView.setIconifiedByDefault(false);
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                fetchLeaderboardData(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                fetchLeaderboardData(newText);
+                return false;
+            }
+        });
+
+        fetchLeaderboardData(""); // Initial load
+    }
+
+    private void fetchLeaderboardData(String query) {
         OkHttpClient client = new OkHttpClient();
-        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_top_donators.php";
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_top_donators.php?search=" + Uri.encode(query);
 
-        okhttp3.Request request = new Request.Builder()
-                .url(url)
-                .build();
-        /*if fails*/
+        Request request = new Request.Builder().url(url).build();
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Log.e("Leaderboard", "Failed to fetch data", e);
             }
-            /*if Succeeds*/
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String requestData = response.body().string();
+                    String responseData = response.body().string();
+                    Log.d("SERVER_RESPONSE", responseData); // debug log
 
                     try {
-                        JSONArray jsonArray = new JSONArray(requestData);
+                        JSONArray jsonArray = new JSONArray(responseData);
+                        ArrayList<UserScore> updatedList = new ArrayList<>();
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
                             String fullName = obj.getString("fullName");
                             int amount = obj.getInt("totalDonated");
                             String avatarUrl = obj.getString("avatarUrl");
-                            leaderboardList.add(new UserScore(fullName, amount, avatarUrl));
+
+                            updatedList.add(new UserScore(fullName, amount, avatarUrl));
                         }
 
-                        runOnUiThread(() -> { /*Update recycler view*/
-                            RecyclerView recyclerView = findViewById(R.id.leaderboardRecyclerView);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(LeaderboardActivity.this));
-                            adapter = new LeaderboardAdapter(leaderboardList);
-                            recyclerView.setAdapter(adapter);
+                        runOnUiThread(() -> {
+                            leaderboardList.clear();
+                            leaderboardList.addAll(updatedList);
+                            adapter.notifyDataSetChanged();
                         });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.e("Leaderboard", "Failed to parse JSON", e);
                     }
                 }
             }
         });
-
-//        recyclerView = findViewById(R.id.leaderboardRecyclerView);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//
-//        leaderboardList = new ArrayList<>();
-//        leaderboardList.add(new UserScore("John Cena", 20));
-//        leaderboardList.add(new UserScore("Ray Mysterio", 14));
-//        leaderboardList.add(new UserScore("Spongebob", 7));
-//        leaderboardList.add(new UserScore("Squidward", 6));
-//        leaderboardList.add(new UserScore("Pravesh", 5));
-//        leaderboardList.add(new UserScore("Patrick Star", 4));
-//        leaderboardList.add(new UserScore("Mr Krabs", 0));
-//
-//        adapter = new LeaderboardAdapter(leaderboardList);
-//        recyclerView.setAdapter(adapter);
     }
 }
