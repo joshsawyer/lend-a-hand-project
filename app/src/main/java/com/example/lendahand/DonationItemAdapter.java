@@ -19,6 +19,14 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
         this.donationItemList = donationItemList;
     }
 
+    public void setItems(ArrayList<DonationItem> newItems) {
+        donationItemList.clear();              // Remove old items
+        donationItemList.addAll(newItems);     // Add new items
+        notifyDataSetChanged();                // Notify RecyclerView to redraw
+    }
+
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, requestInfo, requestBio;
 
@@ -42,8 +50,10 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DonationItem item = donationItemList.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.requestInfo.setText(item.getAmountDonated() + " Donated");
-        holder.requestBio.setText("Given to " + item.getUserReceived());
+        String p = item.getAmountDonated() + " Donated";
+        holder.requestInfo.setText(p);
+        String p1 = "Given to " + item.getUserReceived();
+        holder.requestBio.setText(p1);
     }
 
     @Override
