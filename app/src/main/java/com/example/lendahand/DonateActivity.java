@@ -2,6 +2,7 @@ package com.example.lendahand;
 
 import static java.lang.String.valueOf;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -121,6 +122,11 @@ public class DonateActivity extends BaseActivity {
 
                                 String inputText = amountInput.getText().toString();
                                 if (inputText.isEmpty()) {
+                                    //Toast.makeText(DonateActivity.this, "Please enter an amount.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
+                                    intent.putExtra("userID", userID);
+                                    intent.putExtra("fullName", name);
+                                    startActivity(intent);
                                     Toast.makeText(DonateActivity.this, "Please enter an amount.", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -128,8 +134,14 @@ public class DonateActivity extends BaseActivity {
                                 int enteredAmount = Integer.parseInt(inputText);
 
                                 if (enteredAmount > needed) {
-                                    Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                     amountInput.setText(""); // clear field
+                                    Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
+                                    intent.putExtra("userID", userID);
+                                    intent.putExtra("fullName", name);
+                                    startActivity(intent);
+                                    finish();
+                                    Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                 } else {
 //ENTER USER TRACKING MODE
 //                                    //Here Thandi is the eternal Donor.
@@ -164,14 +176,25 @@ public class DonateActivity extends BaseActivity {
                                             runOnUiThread(() -> {
                                                 Toast.makeText(DonateActivity.this, "Donation submitted!", Toast.LENGTH_SHORT).show();
                                                 // optionally refresh data here
+                                                Intent intent = new Intent(DonateActivity.this, SuccessActivity.class);
+                                                intent.putExtra("userID", userID);
+                                                intent.putExtra("fullName", name);
+                                                startActivity(intent);
+                                                finish();
                                             });
                                         }
 
                                         @Override
                                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                                             e.printStackTrace();
-                                            runOnUiThread(() ->
-                                                    Toast.makeText(DonateActivity.this, "Failed to donate", Toast.LENGTH_SHORT).show()
+                                            runOnUiThread(() -> {
+                                                        Toast.makeText(DonateActivity.this, "Failed to donate", Toast.LENGTH_SHORT).show();
+                                                        Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
+                                                        intent.putExtra("userID", userID);
+                                                        intent.putExtra("fullName", name);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
                                             );
                                         }
 
