@@ -13,6 +13,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Do NOT call setContentView here!
+
     }
 
     protected void setupBottomNavigation() {

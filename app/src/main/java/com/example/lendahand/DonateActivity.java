@@ -5,18 +5,14 @@ import static java.lang.String.valueOf;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +30,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +71,8 @@ public class DonateActivity extends BaseActivity {
                     try{
                         JSONObject jsonObject = new JSONObject(jsonData);
 
-                        String userBio = jsonObject.getString("User_Bio");
+                        String userLocation = "Lives in " + jsonObject.getString("User_Location");
+                        String userPhone = "Phone Number: " + jsonObject.getString("User_Phone");
                         JSONArray requestArray = jsonObject.getJSONArray("Requests");
 
                         ArrayList<RequestItem>  requestList = new ArrayList<>();
@@ -101,8 +97,10 @@ public class DonateActivity extends BaseActivity {
 
                         }
                         runOnUiThread(() -> {
-                            TextView bioView = findViewById(R.id.bioText);
-                            bioView.setText(userBio);
+                            TextView bioView = findViewById(R.id.LocationText);
+                            bioView.setText(userLocation);
+                            TextView phoneNo = findViewById(R.id.phoneNumber);
+                            phoneNo.setText(userPhone);
 
                             RecyclerView recyclerView = findViewById(R.id.requestedItemsRecyclerView);
                             RequestItemAdapter adapter = new RequestItemAdapter(requestList);

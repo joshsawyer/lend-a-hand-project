@@ -83,9 +83,9 @@ public class HomeActivity extends BaseActivity {
                             int totalRequested = obj.getInt("Total_Requested");
                             int totalReceived = obj.getInt("Total_Received");
                             int percentReceived = (totalReceived*100/totalRequested);
-                            String userBio = obj.getString("User_Bio");
+                            String userLocation = "Lives in " + obj.getString("User_Location");
 
-                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userBio));
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userLocation));
                         }
 
                         runOnUiThread(() -> { /*Update recycler view*/
@@ -156,11 +156,6 @@ public class HomeActivity extends BaseActivity {
             getSupportActionBar().setTitle("Home");
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
-
-
-
-
-
     }
 
     private void fetchFilteredData(String searchQuery) {
@@ -198,9 +193,9 @@ public class HomeActivity extends BaseActivity {
                             int totalRequested = obj.getInt("Total_Requested");
                             int totalReceived = obj.getInt("Total_Received");
                             int percentReceived = (totalRequested == 0) ? 0 : (totalReceived * 100 / totalRequested);
-                            String userBio = obj.getString("User_Bio");
+                            String userLocation = "Lives in " + obj.getString("User_Location");
 
-                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userBio));
+                            homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userLocation));
                         }
 
                         // Refresh the RecyclerView on the UI thread
