@@ -74,7 +74,7 @@ public class RequestedItemsFragment extends Fragment {
             Handler mainHandler = new Handler(Looper.getMainLooper());
 
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call,@NonNull IOException e) {
                 mainHandler.post(() ->
                         Toast.makeText(getContext(), "Failed to load requests", Toast.LENGTH_SHORT).show()
                 );
