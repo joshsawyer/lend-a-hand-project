@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LendAHand</string>
+    <string name="no_requests_message">You haven\'t made any requests yet.</string>
+
 </resources>
