@@ -54,7 +54,8 @@ public class RequestActivity extends BaseActivity {
 
         // Spinner setup
         Spinner itemSpinner = findViewById(R.id.itemSpinner);
-        String[] items = {"Tinned Fish", "Blankets", "Canned Beans", "Water", "Toiletries"};
+        String[] items = {"Tinned Fish", "Blankets", "Canned Food", "Baby Formula",
+                "Airtime Voucher (R12)","Stationery Pack", "Sanitary Pads","Jackets"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         itemSpinner.setAdapter(spinnerAdapter);
 
@@ -117,9 +118,8 @@ public class RequestActivity extends BaseActivity {
 
                 runOnUiThread(() -> {
                     if (response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Request submitted successfully!\nResponse: " + responseBody, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Request submitted successfully!", Toast.LENGTH_LONG).show();
                         finish();
-
                     } else {
                         final String errorMessage = "Server error: " + response.code() + "\n" + responseBody;
                         Log.e("RequestActivity", "Server error: " + response.code() + "\n" + responseBody);
