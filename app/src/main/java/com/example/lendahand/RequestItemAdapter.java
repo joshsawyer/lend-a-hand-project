@@ -44,11 +44,17 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
     public void onBindViewHolder(@NonNull RequestItemAdapter.ViewHolder holder, int position) {
         RequestItem item = requestItemList.get(position);
         holder.itemName.setText(item.getItemName());
-        holder.requestInfo.setText(item.getRequested() + " Requested \n"+ (item.getRequested()-item.getReceived()) + " More Needed");
+        String r = item.getRequested() + " Requested \n"+ (item.getRequested()-item.getReceived()) + " More Needed";
+        holder.requestInfo.setText(r);
         holder.progressBar.setMax(item.getRequested());
         holder.progressBar.setProgress(item.getReceived());
         holder.userRecieved.setText(item.getRequestBio());
-        holder.dateRequested.setText("At " + item.getDateRequested());
+        // Split the date to remove time, assuming format is "YYYY-MM-DD HH:MM:SS"
+        String[] dateParts = item.getDateRequested().split(" ");
+        String justDate = dateParts.length > 0 ? dateParts[0] : item.getDateRequested();
+        String p = "At " + justDate;
+        holder.dateRequested.setText(p);
+
 
     }
 
