@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -129,53 +131,58 @@ public class ProfileActivity extends BaseActivity {
             return 2;
         }
     }
-        private void fetchUserInfo(String userId) {
-            String url = "https://lamp.ms.wits.ac.za/home/s2663454/profile.php?userId="+userId;
+    private void fetchUserInfo(String userId) {
+        String url = "https://lamp.ms.wits.ac.za/home/s2663454/profile.php?userId=" + userId;
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
 
-            // 2. Make async GET request
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    // Handle request failure on UI thread
-                    runOnUiThread(() ->
-                            Toast.makeText(ProfileActivity.this, "Failed to fetch user info", Toast.LENGTH_SHORT).show()
-                    );
-                }
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() ->
+                        Toast.makeText(ProfileActivity.this, "Failed to fetch user info", Toast.LENGTH_SHORT).show()
+                );
+            }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        String jsonString = response.body().string();
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String jsonString = response.body().string();
 
-                        try {
-                            // 3. Parse JSON response
-                            JSONObject json = new JSONObject(jsonString);
-                            String fname = json.getString("User_FName");
-                            String lname = json.getString("User_LName");
-                            String fullName = fname + " " + lname;
+                    try {
+                        JSONObject json = new JSONObject(jsonString);
+                        String fname = json.getString("User_FName");
+                        String lname = json.getString("User_LName");
+                        String imageUrl = json.getString("Profile_Image");
+                        String fullName = fname + " " + lname;
 
-                            // 4. Update UI on main thread
-                            runOnUiThread(() -> {
-                                userName.setText(fullName);
-                            });
+                        runOnUiThread(() -> {
+                            userName.setText(fullName);
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            runOnUiThread(() ->
-                                    Toast.makeText(ProfileActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show()
-                            );
-                        }
-                    } else {
+                            ImageView profileImage = findViewById(R.id.profileImage);
+                            Glide.with(ProfileActivity.this)
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.ic_profile_placeholder)
+                                    .circleCrop()
+                                    .into(profileImage);
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         runOnUiThread(() ->
-                                Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(ProfileActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show()
                         );
                     }
+                } else {
+                    runOnUiThread(() -> 
+                            Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
+                    );
                 }
-            });
-        }
+            }
+        });
+    }
+
 
 }
