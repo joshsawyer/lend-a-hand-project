@@ -56,6 +56,12 @@ public class DonateActivity extends BaseActivity {
         /*getting the user data after a user on the home page was clicked on*/
         String name = getIntent().getStringExtra("fullName");
         String userID = getIntent().getStringExtra("userID");
+
+        if (userId.equals(userID)) {
+            Toast.makeText(this, "You cannot donate to yourself.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         /*CONNECTING TO SERVER USING USER-ID*/
         OkHttpClient client = new OkHttpClient();
         String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_user_requests.php?userID=" + userID;
