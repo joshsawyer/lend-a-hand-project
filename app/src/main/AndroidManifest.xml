@@ -19,8 +19,8 @@
 
         <!-- MainActivity is the launcher activity -->
         <activity
-            android:name=".LoginActivity"
-            android:label="Home"
+            android:name=".Starterpage"
+            android:label="Welcome"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +28,9 @@
             </intent-filter>
         </activity>
 
+
         <!-- Other Activities -->
+        <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".RegisterActivity" />
