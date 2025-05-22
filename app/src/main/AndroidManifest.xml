@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.lendahand">
-
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -23,15 +21,21 @@
             android:name=".SuccessActivity"
             android:exported="false" /> <!-- MainActivity is the launcher activity -->
         <activity
-            android:name=".LoginActivity"
-            android:exported="true"
-            android:label="Home">
+
+            android:name=".Starterpage"
+            android:label="Welcome"
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Other Activities -->
+        </activity>
+
+
+        <!-- Other Activities -->
+        <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".RegisterActivity" />
