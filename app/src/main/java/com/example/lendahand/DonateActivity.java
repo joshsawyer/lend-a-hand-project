@@ -149,11 +149,6 @@ public class DonateActivity extends BaseActivity {
                                     finish();
                                     Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                 } else {
-//ENTER USER TRACKING MODE
-//                                    //Here Thandi is the eternal Donor.
-//                                    // But please replace her with the person using the app.
-//                                    // Otherwise she'll have too much power!
-//                                    //end user tracking mode
 
                                     int requestID = 0;
                                     for(int i = 0; i<requestList.size();i++) {

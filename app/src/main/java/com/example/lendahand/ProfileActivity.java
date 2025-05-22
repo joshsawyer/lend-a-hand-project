@@ -150,6 +150,7 @@ public class ProfileActivity extends BaseActivity {
                     String jsonString = response.body().string();
 
                     try {
+
                         JSONObject json = new JSONObject(jsonString);
                         String fname = json.getString("User_FName");
                         String lname = json.getString("User_LName");

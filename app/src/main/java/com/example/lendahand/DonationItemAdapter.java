@@ -28,13 +28,14 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView itemName, requestInfo, requestBio;
+        TextView itemName, requestInfo, requestBio, donationDate;
 
         public ViewHolder(View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.itemName);
             requestInfo = itemView.findViewById(R.id.DonationInfo);
             requestBio = itemView.findViewById(R.id.userRecieved);
+            donationDate = itemView.findViewById(R.id.donationDate);
         }
     }
 
@@ -54,6 +55,8 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
         holder.requestInfo.setText(p);
         String p1 = "Given to " + item.getUserReceived();
         holder.requestBio.setText(p1);
+        String date = item.getDateDonated();
+        holder.donationDate.setText(date);
     }
 
     @Override
