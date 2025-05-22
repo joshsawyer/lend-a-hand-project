@@ -1,22 +1,21 @@
 package com.example.lendahand;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.inputmethod.InputMethodManager;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.widget.SearchView;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,37 +35,37 @@ public class HomeActivity extends BaseActivity {
     ArrayList<HomeItem> homeItemList = new ArrayList<>();
     private HomeAdaptor userAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
-        String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
-
-        if (userId != "-1") {
-            // User is logged in
-        } else {
-            // No user found, maybe redirect to LoginActivity
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("user_id", "-1");
+        if (userId.equals("-1")) {
+            // Not logged in, redirect if needed
+        }
 
-        /*CONNECTING TO SERVER*/
+        RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
+        TextView emptyTextView = findViewById(R.id.emptyTextView);
+
+        emptyTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, RequestActivity.class);
+            startActivity(intent);
+        });
+
         OkHttpClient client = new OkHttpClient();
         String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_users_summary_home.php";
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        /*if fails*/
+        Request request = new Request.Builder().url(url).build();
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(HomeActivity.this, "Failed to connect to server", Toast.LENGTH_SHORT).show());
             }
-            /*if Succeeds*/
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
@@ -74,7 +73,7 @@ public class HomeActivity extends BaseActivity {
 
                     try {
                         JSONArray jsonArray = new JSONArray(requestData);
-
+                        homeItemList.clear();
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
@@ -82,24 +81,34 @@ public class HomeActivity extends BaseActivity {
                             String fullName = obj.getString("Full_Name");
                             int totalRequested = obj.getInt("Total_Requested");
                             int totalReceived = obj.getInt("Total_Received");
-                            int percentReceived = (totalReceived*100/totalRequested);
+                            int percentReceived = (totalRequested == 0) ? 0 : (totalReceived * 100 / totalRequested);
                             String userLocation = "Lives in " + obj.getString("User_Location");
 
                             homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userLocation));
                         }
 
-                        runOnUiThread(() -> { /*Update recycler view*/
-                            RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
+                        runOnUiThread(() -> {
                             userAdapter = new HomeAdaptor(homeItemList, homeItem -> {
-                                /*When a user is clicked this goes to DonateActivity where the user's name will be sent to that activity*/
                                 Intent intent = new Intent(HomeActivity.this, DonateActivity.class);
                                 intent.putExtra("userID", homeItem.getUserID());
                                 intent.putExtra("fullName", homeItem.getFullName());
-
                                 startActivity(intent);
                             });
+
+                            courseRV.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
+                            courseRV.setAdapter(userAdapter);
+
+                            if (homeItemList.isEmpty()) {
+                                emptyTextView.setVisibility(View.VISIBLE);
+                                courseRV.setVisibility(View.GONE);
+                            } else {
+                                emptyTextView.setVisibility(View.GONE);
+                                courseRV.setVisibility(View.VISIBLE);
+                            }
+
                             SearchView searchView = findViewById(R.id.searchBar);
                             searchView.setQueryHint("Search");
+                            searchView.setIconifiedByDefault(false);
                             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                 @Override
                                 public boolean onQueryTextSubmit(String query) {
@@ -113,28 +122,16 @@ public class HomeActivity extends BaseActivity {
                                     return false;
                                 }
                             });
-                            /*Keeps searchbar expanded so te hitbox isn't just the icon*/
-                            searchView.setIconifiedByDefault(false);
 
-                            /*To see the search icon and searchbar text hint. makes them darker*/
                             searchView.post(() -> {
                                 EditText searchEditText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
                                 if (searchEditText != null) {
                                     searchEditText.setTextColor(Color.BLACK);
-
-                                    searchEditText.setTypeface(ResourcesCompat.getFont(HomeActivity.this, R.font.inter)); // Optional
+                                    searchEditText.setTypeface(ResourcesCompat.getFont(HomeActivity.this, R.font.inter));
                                     ImageView searchIcon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
-                                    searchIcon.setColorFilter(Color.GRAY); // Choose any visible color
-
-                                } else {
-                                    Toast.makeText(HomeActivity.this, "Search bar text field not found", Toast.LENGTH_SHORT).show();
+                                    searchIcon.setColorFilter(Color.GRAY);
                                 }
                             });
-
-
-                            courseRV.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-                            courseRV.setAdapter(userAdapter);
-                            
                         });
 
                     } catch (JSONException e) {
@@ -147,11 +144,8 @@ public class HomeActivity extends BaseActivity {
         setupBottomNavigation();
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
 
-        // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Home");
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Home");
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -160,20 +154,15 @@ public class HomeActivity extends BaseActivity {
 
     private void fetchFilteredData(String searchQuery) {
         OkHttpClient client = new OkHttpClient();
-
         String url = "https://lamp.ms.wits.ac.za/~s2864063/get_users_summary_home.php?search=" + Uri.encode(searchQuery);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                runOnUiThread(() ->
-                        Toast.makeText(HomeActivity.this, "Error loading data", Toast.LENGTH_SHORT).show()
-                );
+                runOnUiThread(() -> Toast.makeText(HomeActivity.this, "Error loading data", Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -183,9 +172,8 @@ public class HomeActivity extends BaseActivity {
 
                     try {
                         JSONArray jsonArray = new JSONArray(responseData);
-
-                        // Update the data list
                         homeItemList.clear();
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
                             String userID = obj.getString("User_ID");
@@ -198,8 +186,20 @@ public class HomeActivity extends BaseActivity {
                             homeItemList.add(new HomeItem(fullName, totalRequested, percentReceived, userID, userLocation));
                         }
 
-                        // Refresh the RecyclerView on the UI thread
-                        runOnUiThread(() -> userAdapter.notifyDataSetChanged());
+                        runOnUiThread(() -> {
+                            TextView emptyTextView = findViewById(R.id.emptyTextView);
+                            RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);
+
+                            userAdapter.notifyDataSetChanged();
+
+                            if (homeItemList.isEmpty()) {
+                                emptyTextView.setVisibility(View.VISIBLE);
+                                courseRV.setVisibility(View.GONE);
+                            } else {
+                                emptyTextView.setVisibility(View.GONE);
+                                courseRV.setVisibility(View.VISIBLE);
+                            }
+                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
