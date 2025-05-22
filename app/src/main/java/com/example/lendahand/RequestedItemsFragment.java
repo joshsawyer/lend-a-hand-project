@@ -46,7 +46,7 @@ public class RequestedItemsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_requested, container, false);
 
         SharedPreferences prefs = requireContext().getSharedPreferences("LendAHandPrefs", Context.MODE_PRIVATE);
-        String userId = prefs.getString("User_ID", "-1");
+        String userId = prefs.getString("user_id", "-1");
 
         recyclerView = view.findViewById(R.id.requestedRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -111,12 +111,12 @@ public class RequestedItemsFragment extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
 
-                            String itemName = obj.getString("ItemName");
-                            int requested = obj.getInt("Requested");
-                            int received = obj.getInt("Received");
-                            String requestBio = obj.getString("RequestBio");
-                            String dateRequested = obj.getString("DateRequested");
-                            int requestID = obj.getInt("RequestID");
+                            String itemName = obj.getString("itemName");
+                            int requested = obj.getInt("requested");
+                            int received = obj.getInt("received");
+                            String requestBio = obj.getString("requestBio");
+                            String dateRequested = obj.getString("dateRequested");
+                            int requestID = obj.getInt("requestID");
 
                             RequestItem item = new RequestItem(itemName, requested, received, requestBio, dateRequested, requestID);
                             tempList.add(item);
