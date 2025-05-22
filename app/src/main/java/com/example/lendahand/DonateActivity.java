@@ -56,6 +56,12 @@ public class DonateActivity extends BaseActivity {
         /*getting the user data after a user on the home page was clicked on*/
         String name = getIntent().getStringExtra("fullName");
         String userID = getIntent().getStringExtra("userID");
+
+        if (userId.equals(userID)) {
+            Toast.makeText(this, "You cannot donate to yourself.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         /*CONNECTING TO SERVER USING USER-ID*/
         OkHttpClient client = new OkHttpClient();
         String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_user_requests.php?userID=" + userID;
@@ -143,11 +149,6 @@ public class DonateActivity extends BaseActivity {
                                     finish();
                                     Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                 } else {
-//ENTER USER TRACKING MODE
-//                                    //Here Thandi is the eternal Donor.
-//                                    // But please replace her with the person using the app.
-//                                    // Otherwise she'll have too much power!
-//                                    //end user tracking mode
 
                                     int requestID = 0;
                                     for(int i = 0; i<requestList.size();i++) {

@@ -64,7 +64,9 @@ public class RequestedItemsFragment extends Fragment {
 
     private void fetchRequestedItems(String userId) {
         OkHttpClient client = new OkHttpClient();
-        String url = BASE_URL + "?user_Id=" + userId;
+
+        String url = BASE_URL + "?userID=" + userId;
+
 
         Request request = new Request.Builder()
                 .url(url)
