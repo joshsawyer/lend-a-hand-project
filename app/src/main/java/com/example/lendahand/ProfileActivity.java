@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttp;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.Request;
@@ -112,10 +111,8 @@ public class ProfileActivity extends BaseActivity {
         public Fragment createFragment(int position) {
             Fragment fragment;
             if (position == 0) {
-                //return new DonatedItemsFragment();
                 fragment = new DonatedItemsFragment();
             } else {
-                //return new RequestedItemsFragment();
                 fragment = new RequestedItemsFragment();
             }
 
@@ -131,8 +128,9 @@ public class ProfileActivity extends BaseActivity {
             return 2;
         }
     }
+
     private void fetchUserInfo(String userId) {
-        String url = "https://lamp.ms.wits.ac.za/home/s2663454/profile.php?userId=" + userId;
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/profile.php?userID=" + userId;
 
         Request request = new Request.Builder()
                 .url(url)
@@ -155,12 +153,11 @@ public class ProfileActivity extends BaseActivity {
                         JSONObject json = new JSONObject(jsonString);
                         String fname = json.getString("User_FName");
                         String lname = json.getString("User_LName");
-                        String imageUrl = json.getString("Profile_Image");
+                        String imageUrl = json.getString("Avatar_URL");
                         String fullName = fname + " " + lname;
 
                         runOnUiThread(() -> {
                             userName.setText(fullName);
-
                             ImageView profileImage = findViewById(R.id.profileImage);
                             Glide.with(ProfileActivity.this)
                                     .load(imageUrl)
@@ -176,13 +173,11 @@ public class ProfileActivity extends BaseActivity {
                         );
                     }
                 } else {
-                    runOnUiThread(() -> 
+                    runOnUiThread(() ->
                             Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
                     );
                 }
             }
         });
     }
-
-
 }
