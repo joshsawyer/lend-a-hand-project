@@ -132,7 +132,7 @@ public class ProfileActivity extends BaseActivity {
         }
     }
     private void fetchUserInfo(String userId) {
-        String url = "https://lamp.ms.wits.ac.za/home/s2663454/profile.php?userId=" + userId;
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/profile.php?userID=" + userId;
 
         Request request = new Request.Builder()
                 .url(url)
@@ -152,10 +152,11 @@ public class ProfileActivity extends BaseActivity {
                     String jsonString = response.body().string();
 
                     try {
+
                         JSONObject json = new JSONObject(jsonString);
                         String fname = json.getString("User_FName");
                         String lname = json.getString("User_LName");
-                        String imageUrl = json.getString("Profile_Image");
+                        String imageUrl = json.getString("Avatar_URL");
                         String fullName = fname + " " + lname;
 
                         runOnUiThread(() -> {
