@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttp;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import okhttp3.Request;
@@ -112,10 +111,8 @@ public class ProfileActivity extends BaseActivity {
         public Fragment createFragment(int position) {
             Fragment fragment;
             if (position == 0) {
-                //return new DonatedItemsFragment();
                 fragment = new DonatedItemsFragment();
             } else {
-                //return new RequestedItemsFragment();
                 fragment = new RequestedItemsFragment();
             }
 
@@ -131,6 +128,7 @@ public class ProfileActivity extends BaseActivity {
             return 2;
         }
     }
+
     private void fetchUserInfo(String userId) {
         String url = "https://lamp.ms.wits.ac.za/home/s2864063/profile.php?userID=" + userId;
 
@@ -161,7 +159,6 @@ public class ProfileActivity extends BaseActivity {
 
                         runOnUiThread(() -> {
                             userName.setText(fullName);
-
                             ImageView profileImage = findViewById(R.id.profileImage);
                             Glide.with(ProfileActivity.this)
                                     .load(imageUrl)
@@ -177,13 +174,11 @@ public class ProfileActivity extends BaseActivity {
                         );
                     }
                 } else {
-                    runOnUiThread(() -> 
+                    runOnUiThread(() ->
                             Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
                     );
                 }
             }
         });
     }
-
-
 }
