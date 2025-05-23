@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LendAHand</string>
     <string name="no_requests_message">You haven\'t made any requests yet.</string>
+    <string name="already_have_an_account_click_here">Already have an account? Click here</string>
+    <string name="get_started">Get Started</string>
 
 </resources>

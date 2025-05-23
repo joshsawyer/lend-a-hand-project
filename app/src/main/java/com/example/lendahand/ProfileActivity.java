@@ -143,13 +143,13 @@ public class ProfileActivity extends BaseActivity {
                         Toast.makeText(ProfileActivity.this, "Failed to fetch user info", Toast.LENGTH_SHORT).show()
                 );
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String jsonString = response.body().string();
 
                     try {
+
                         JSONObject json = new JSONObject(jsonString);
                         String fname = json.getString("User_FName");
                         String lname = json.getString("User_LName");
