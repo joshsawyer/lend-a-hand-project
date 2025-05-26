@@ -86,7 +86,7 @@ public class RequestedItemsFragment extends Fragment {
             public void onResponse(@NonNull Call call,@NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     mainHandler.post(() ->
-                            Toast.makeText(getContext(), "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(getContext(), "Server error", Toast.LENGTH_SHORT).show()
                     );
                     return;
                 }
