@@ -70,24 +70,29 @@ public class RequestActivity extends BaseActivity {
                 String selectedItem = itemSpinner.getSelectedItem().toString();
                 String amountStr = amountInput.getText().toString().trim();
                 String descriptionStr = descriptionInput.getText().toString().trim();
+                int amtItems = Integer.parseInt(amountStr);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 String currentDate = sdf.format(new Date());
 
                 if (!amountStr.isEmpty()) {
-                    try {
-                        int amount = Integer.parseInt(amountStr);
+                    if(amtItems <= 100) {
+                        try {
+                            int amount = Integer.parseInt(amountStr);
 
-                        JSONObject jsonObj = new JSONObject();
-                        jsonObj.put("item", selectedItem);
-                        jsonObj.put("amount", amount);
-                        jsonObj.put("date", currentDate);
-                        jsonObj.put("userId", userId);
-                        jsonObj.put("description", descriptionStr);  // <-- Add description here
+                            JSONObject jsonObj = new JSONObject();
+                            jsonObj.put("item", selectedItem);
+                            jsonObj.put("amount", amount);
+                            jsonObj.put("date", currentDate);
+                            jsonObj.put("userId", userId);
+                            jsonObj.put("description", descriptionStr);  // <-- Add description here
 
-                        postData("https://lamp.ms.wits.ac.za/home/s2864063/submit_requests.php", jsonObj.toString());
-                    } catch (NumberFormatException | IOException | JSONException e) {
-                        e.printStackTrace();
+                            postData("https://lamp.ms.wits.ac.za/home/s2864063/submit_requests.php", jsonObj.toString());
+                        } catch (NumberFormatException | IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else{
+                        amountInput.setError("Number must be equal or less than 100");
                     }
                 } else {
                     amountInput.setError("Please enter a number");
@@ -118,7 +123,7 @@ public class RequestActivity extends BaseActivity {
 
                 runOnUiThread(() -> {
                     if (response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Request submitted successfully!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Request Successful!", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
                         final String errorMessage = "Server error: " + response.code() + "\n" + responseBody;

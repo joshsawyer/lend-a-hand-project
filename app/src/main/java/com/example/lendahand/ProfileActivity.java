@@ -140,10 +140,9 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() ->
-                        Toast.makeText(ProfileActivity.this, "Failed to fetch user info", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(ProfileActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show()
                 );
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
@@ -170,12 +169,12 @@ public class ProfileActivity extends BaseActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                         runOnUiThread(() ->
-                                Toast.makeText(ProfileActivity.this, "Error parsing user data", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(ProfileActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show()
                         );
                     }
                 } else {
                     runOnUiThread(() ->
-                            Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(ProfileActivity.this, "Server error", Toast.LENGTH_SHORT).show()
                     );
                 }
             }

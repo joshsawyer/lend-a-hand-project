@@ -6,9 +6,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,6 +33,7 @@ public class DonatedItemsFragment extends Fragment {
     private RecyclerView recyclerView;
     private DonationItemAdapter adapter;
     private ArrayList<DonationItem> donatedItems;
+    private TextView noDonationTextView;
 
     @Nullable
     @Override
@@ -37,6 +42,7 @@ public class DonatedItemsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_donated, container, false);
 
         recyclerView = view.findViewById(R.id.donatedRecyclerView);
+        noDonationTextView = view.findViewById(R.id.noDonationTextView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         donatedItems = new ArrayList<>();
@@ -91,17 +97,26 @@ public class DonatedItemsFragment extends Fragment {
     }
     private ArrayList<DonationItem> parseDonationItems(JSONArray donatedItemsArray) throws JSONException {
         ArrayList<DonationItem> list = new ArrayList<>();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
 
-        for (int i = 0; i < donatedItemsArray.length(); i++) {
-            JSONObject item = donatedItemsArray.getJSONObject(i);
+        if (donatedItemsArray.length() == 0) {
+            mainHandler.post(() -> {
+                noDonationTextView.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            });
+        }
+        else{
+            for (int i = 0; i < donatedItemsArray.length(); i++) {
+                JSONObject item = donatedItemsArray.getJSONObject(i);
 
-            String name = item.getString("Resource_Name");
-            int quantity = item.getInt("Amount_Donated");
-            String date = item.getString("Date_Donated");
-            String userReceived = item.getString("User_FName") + " " + item.getString("User_LName");
+                String name = item.getString("Resource_Name");
+                int quantity = item.getInt("Amount_Donated");
+                String date = item.getString("Date_Donated");
+                String userReceived = item.getString("User_FName") + " " + item.getString("User_LName");
 
-            DonationItem donation = new DonationItem(name, quantity, userReceived, date);
-            list.add(donation);
+                DonationItem donation = new DonationItem(name, quantity, userReceived, date);
+                list.add(donation);
+            }
         }
 
         return list;
