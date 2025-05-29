@@ -3,6 +3,7 @@ package com.example.lendahand;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,7 +52,7 @@ public class ProfileActivity extends BaseActivity {
             // No user found, redirect to LoginActivity
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
             startActivity(intent);
-            finish(); // Optional: prevent returning to this activity
+            finish();
         }
 
         super.onCreate(savedInstanceState);
@@ -64,7 +65,6 @@ public class ProfileActivity extends BaseActivity {
         setupBottomNavigation();
         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
 
-        // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Profile");
@@ -76,28 +76,27 @@ public class ProfileActivity extends BaseActivity {
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
-        // Hook views
+        Toast toast = Toast.makeText(this, "Check your active requests", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP | Gravity.END, 30, 300);
+        toast.show();
+
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         requestItemButton = findViewById(R.id.requestItemButton);
 
-        // Set up ViewPager2 adapter
         viewPager.setAdapter(new ProfilePagerAdapter(this, userId));
 
-        // Attach TabLayout to ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) tab.setText("Donated");
             else tab.setText("Requested");
         }).attach();
 
-        // Request item button → open RequestActivity
         requestItemButton.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, RequestActivity.class);
             startActivity(intent);
         });
     }
 
-    // Pager Adapter for tabs
     private static class ProfilePagerAdapter extends FragmentStateAdapter {
 
         private final String userId;
