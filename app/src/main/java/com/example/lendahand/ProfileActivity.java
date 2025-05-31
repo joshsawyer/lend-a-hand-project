@@ -43,13 +43,11 @@ public class ProfileActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
-        String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
+        String userId = prefs.getString("user_id", "-1");
 
         if (!userId.equals("-1")) {
             // User is logged in
-            // You can stay on the current activity or load user data
         } else {
-            // No user found, redirect to LoginActivity
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -61,6 +59,7 @@ public class ProfileActivity extends BaseActivity {
         userName = findViewById(R.id.username);
 
         fetchUserInfo(userId);
+        checkForNewReceivedDonations(userId);  // <-- Added this line
 
         setupBottomNavigation();
         bottomNavigationView.setSelectedItemId(R.id.nav_profile);
@@ -75,10 +74,6 @@ public class ProfileActivity extends BaseActivity {
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
-
-        Toast toast = Toast.makeText(this, "Check your active requests", Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.END, 30, 300);
-        toast.show();
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
@@ -98,8 +93,8 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private static class ProfilePagerAdapter extends FragmentStateAdapter {
-
         private final String userId;
+
         public ProfilePagerAdapter(@NonNull FragmentActivity fragmentActivity, String userId) {
             super(fragmentActivity);
             this.userId = userId;
@@ -142,13 +137,13 @@ public class ProfileActivity extends BaseActivity {
                         Toast.makeText(ProfileActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show()
                 );
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String jsonString = response.body().string();
 
                     try {
-
                         JSONObject json = new JSONObject(jsonString);
                         String fname = json.getString("User_FName");
                         String lname = json.getString("User_LName");
@@ -175,6 +170,47 @@ public class ProfileActivity extends BaseActivity {
                     runOnUiThread(() ->
                             Toast.makeText(ProfileActivity.this, "Server error", Toast.LENGTH_SHORT).show()
                     );
+                }
+            }
+        });
+    }
+
+    private void checkForNewReceivedDonations(String userId) {
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_latest_received_donation.php?userID=" + userId;
+
+        Request request = new Request.Builder().url(url).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // Do nothing
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String json = response.body().string();
+                    try {
+                        JSONObject obj = new JSONObject(json);
+                        String latestDonationTime = obj.getString("latest");
+
+                        SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
+                        String lastSeen = prefs.getString("last_seen_donation", "");
+
+                        if (latestDonationTime != null && !latestDonationTime.equals("") && !latestDonationTime.equals(lastSeen)) {
+                            prefs.edit().putString("last_seen_donation", latestDonationTime).apply();
+
+                            runOnUiThread(() -> {
+                                Toast toast = Toast.makeText(ProfileActivity.this, "Someone just donated to you!", Toast.LENGTH_LONG);
+                                toast.setGravity(Gravity.TOP | Gravity.END, 30, 300);
+                                toast.show();
+                            });
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
