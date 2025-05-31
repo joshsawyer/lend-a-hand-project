@@ -43,7 +43,6 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
                 .into(holder.avatarIcon);
 
 
-        // Set background color based on position
         switch (position) {
             case 0:
                 holder.cardView.setCardBackgroundColor(Color.parseColor("#FFD54F")); // Gold

@@ -49,7 +49,6 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
         holder.progressBar.setMax(item.getRequested());
         holder.progressBar.setProgress(item.getReceived());
         holder.userRecieved.setText(item.getRequestBio());
-        // Split the date to remove time, assuming format is "YYYY-MM-DD HH:MM:SS"
         String[] dateParts = item.getDateRequested().split(" ");
         String justDate = dateParts.length > 0 ? dateParts[0] : item.getDateRequested();
         String p = "At " + justDate;

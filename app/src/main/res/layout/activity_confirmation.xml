@@ -8,7 +8,6 @@
     android:background="#FFFFFF"
     android:padding="24dp">
 
-    <!-- Toolbar -->
     <include
         layout="@layout/toolbar"
         android:id="@+id/toolbar"

@@ -35,7 +35,7 @@ public class RequestedItemsFragment extends Fragment {
     private RecyclerView recyclerView;
     private RequestItemAdapter adapter;
     private ArrayList<RequestItem> requestedItems;
-    private TextView noDataText;  // NEW: For no-data message
+    private TextView noDataText;
 
     private static final String BASE_URL = "https://lamp.ms.wits.ac.za/home/s2864063/user_requested_items.php";
 
@@ -51,7 +51,7 @@ public class RequestedItemsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.requestedRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        noDataText = view.findViewById(R.id.noDataTextView);  // Your layout must include this
+        noDataText = view.findViewById(R.id.noDataTextView);
 
         requestedItems = new ArrayList<>();
         adapter = new RequestItemAdapter(requestedItems);

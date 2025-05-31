@@ -9,9 +9,9 @@ public class NosuccessActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_donation_nosuccess); // Make sure this matches your XML file
+        setContentView(R.layout.activity_donation_nosuccess);
 
-        Button returnHome = findViewById(R.id.returnHomeButton); // Now it's safe
+        Button returnHome = findViewById(R.id.returnHomeButton);
         returnHome.setOnClickListener(v -> {
             Intent intent = new Intent(NosuccessActivity.this, DonateActivity.class);
             intent.putExtra("userID", getIntent().getStringExtra("userID"));

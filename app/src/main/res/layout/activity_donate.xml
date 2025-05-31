@@ -13,7 +13,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Scrollable Content -->
     <ScrollView
         android:id="@+id/donateScroll"
         android:layout_width="0dp"
@@ -62,7 +61,7 @@
                             android:id="@+id/requestorName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Kurt Wagner"
+                            android:text=""
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:fontFamily="@font/inter" />
@@ -78,7 +77,6 @@
                         android:textColor="#555"
                         android:textSize="14sp" />
 
-                    <!-- Amount Input -->
                     <TextView
                         android:id="@+id/phoneNumber"
                         android:layout_width="match_parent"
@@ -118,7 +116,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Section Title -->
             <TextView
                 android:id="@+id/sectionTitle"
                 android:layout_width="wrap_content"

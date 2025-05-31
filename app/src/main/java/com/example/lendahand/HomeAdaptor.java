@@ -12,18 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 
-// Adapter to connect item_person_card to RecyclerView
+
 public class HomeAdaptor extends RecyclerView.Adapter<HomeAdaptor.ViewHolder> {
 
     private final ArrayList<HomeItem> homeItemList;
     private final OnUserClickListener listener;
 
-    // Listener interface for clicks
+
     public interface OnUserClickListener {
         void onUserClick(HomeItem homeItem);
     }
 
-    // Adapter constructor with click listener
     public HomeAdaptor(ArrayList<HomeItem> homeItemList, OnUserClickListener listener) {
         this.homeItemList = homeItemList;
         this.listener = listener;
@@ -44,7 +43,6 @@ public class HomeAdaptor extends RecyclerView.Adapter<HomeAdaptor.ViewHolder> {
         holder.progressBar.setProgress(homeItem.getPercentReceived());
         holder.userLocation.setText(homeItem.getUserLocation());
 
-        // Make entire card clickable
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onUserClick(homeItem);
@@ -57,13 +55,11 @@ public class HomeAdaptor extends RecyclerView.Adapter<HomeAdaptor.ViewHolder> {
         return homeItemList.size();
     }
 
-    // ViewHolder for the card views
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
         private final TextView itemsRequestedTextView;
         private final ProgressBar progressBar;
         private final TextView userLocation;
-        // private final TextView userCardBio;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

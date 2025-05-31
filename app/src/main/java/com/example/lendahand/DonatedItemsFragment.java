@@ -49,7 +49,6 @@ public class DonatedItemsFragment extends Fragment {
         adapter = new DonationItemAdapter(donatedItems);
         recyclerView.setAdapter(adapter);
 
-        // Get userId from arguments
         String userId = getArguments() != null ? getArguments().getString("userId", "-1") : "-1";
 
         fetchDonatedItems(userId);
@@ -66,7 +65,7 @@ public class DonatedItemsFragment extends Fragment {
         new OkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // Log or toast error on UI if needed
+
             }
 
             @Override
@@ -81,7 +80,7 @@ public class DonatedItemsFragment extends Fragment {
                         ArrayList<DonationItem> donationItems = parseDonationItems(userDetails.getJSONArray("DonatedItems"));
 
 
-                        // Now you have a list of DonationItem objects
+        
                         requireActivity().runOnUiThread(() -> {
                             adapter.setItems(donationItems);  // update your adapter with new data
                             adapter.notifyDataSetChanged();   // refresh the RecyclerView

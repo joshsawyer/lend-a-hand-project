@@ -9,9 +9,9 @@ public class SuccessActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_donation_success); // Make sure this matches your XML file
+        setContentView(R.layout.activity_donation_success);
 
-        Button returnHome = findViewById(R.id.returnHomeButton); // Now it's safe
+        Button returnHome = findViewById(R.id.returnHomeButton);
         returnHome.setOnClickListener(v -> {
             Intent intent = new Intent(SuccessActivity.this, DonateActivity.class);
             intent.putExtra("userID", getIntent().getStringExtra("userID"));
