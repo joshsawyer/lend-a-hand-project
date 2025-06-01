@@ -36,7 +36,6 @@ public class LeaderboardActivity extends BaseActivity {
         String userId = prefs.getString("user_id", "-1");
 
         if (userId.equals("-1")) {
-            // TODO: Redirect if needed
         }
 
         super.onCreate(savedInstanceState);

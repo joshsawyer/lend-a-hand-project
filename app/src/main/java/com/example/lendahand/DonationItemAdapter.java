@@ -20,9 +20,9 @@ public class DonationItemAdapter extends RecyclerView.Adapter<DonationItemAdapte
     }
 
     public void setItems(ArrayList<DonationItem> newItems) {
-        donationItemList.clear();              // Remove old items
-        donationItemList.addAll(newItems);     // Add new items
-        notifyDataSetChanged();                // Notify RecyclerView to redraw
+        donationItemList.clear();
+        donationItemList.addAll(newItems);
+        notifyDataSetChanged();
     }
 
 

@@ -9,8 +9,6 @@ public class RequestItem {
 
     private int requestID;
 
-
-
     public RequestItem(String itemName, int requested, int received, String requestBio, String dateRequested, Integer requestID) {
         this.itemName = itemName;
         this.requested = requested;

@@ -19,7 +19,7 @@
             android:exported="false" />
         <activity
             android:name=".SuccessActivity"
-            android:exported="false" /> <!-- MainActivity is the launcher activity -->
+            android:exported="false" />
         <activity
 
             android:name=".Starterpage"
@@ -34,7 +34,7 @@
         </activity>
 
 
-        <!-- Other Activities -->
+
         <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".ProfileActivity" />
@@ -42,8 +42,6 @@
         <activity android:name=".LeaderboardActivity" />
         <activity android:name=".DonateActivity" />
         <activity android:name=".RequestActivity" />
-        <activity android:name=".success" />
-        <activity android:name=".noSuccess" />
     </application>
 
 </manifest>

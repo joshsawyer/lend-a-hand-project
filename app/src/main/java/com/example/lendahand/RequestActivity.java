@@ -22,6 +22,8 @@ import okhttp3.Request;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,8 +77,14 @@ public class RequestActivity extends BaseActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 String currentDate = sdf.format(new Date());
 
+                if ( !descriptionStr.isEmpty() && descriptionStr.length() <= 300){
+
+                }else{
+                    descriptionInput.setError("Enter 1 to 300 characters");
+                }
+
                 if (!amountStr.isEmpty()) {
-                    if(amtItems <= 100) {
+                    if(amtItems <= 100 && 0 < amtItems) {
                         try {
                             int amount = Integer.parseInt(amountStr);
 
@@ -85,7 +93,7 @@ public class RequestActivity extends BaseActivity {
                             jsonObj.put("amount", amount);
                             jsonObj.put("date", currentDate);
                             jsonObj.put("userId", userId);
-                            jsonObj.put("description", descriptionStr);  // <-- Add description here
+                            jsonObj.put("description", descriptionStr);
 
                             postData("https://lamp.ms.wits.ac.za/home/s2864063/submit_requests.php", jsonObj.toString());
                         } catch (NumberFormatException | IOException | JSONException e) {

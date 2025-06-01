@@ -43,7 +43,7 @@ public class HomeActivity extends BaseActivity {
         SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
         String userId = prefs.getString("user_id", "-1");
         if (userId.equals("-1")) {
-            // Not logged in, redirect if needed
+
         }
 
         RecyclerView courseRV = findViewById(R.id.donationsRecyclerView);

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Toolbar -->
     <include
         layout="@layout/toolbar"
         android:id="@+id/toolbar"
@@ -13,7 +12,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ScrollView for form -->
     <ScrollView
         android:id="@+id/requestScroll"
         android:layout_width="0dp"
@@ -31,7 +29,6 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <!-- Request Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,7 +42,6 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Heading -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -55,7 +51,6 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <!-- Subtext -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -65,7 +60,6 @@
                         android:textColor="#888888"
                         android:textSize="14sp" />
 
-                    <!-- Amount -->
                     <EditText
                         android:id="@+id/amountInput"
                         android:layout_width="match_parent"
@@ -76,7 +70,6 @@
                         android:hint="Value"
                         android:inputType="number" />
 
-                    <!-- Description / Bio -->
                     <EditText
                         android:id="@+id/descriptionInput"
                         android:layout_width="match_parent"
@@ -90,7 +83,6 @@
                         android:maxLines="5"
                         android:gravity="top|start" />
 
-                    <!-- Item Dropdown -->
                     <Spinner
                         android:id="@+id/itemSpinner"
                         android:layout_width="match_parent"
@@ -98,7 +90,6 @@
                         android:layout_marginTop="12dp" />
 
 
-                    <!-- Confirm Button -->
                     <Button
                         android:id="@+id/confirmButton"
                         android:layout_width="match_parent"
@@ -113,7 +104,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Nav -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"

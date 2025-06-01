@@ -12,7 +12,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Do NOT call setContentView here!
 
     }
 
@@ -25,7 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (!(this instanceof HomeActivity)) {
                     startActivity(new Intent(this, HomeActivity.class));
                     overridePendingTransition(0, 0);
-                    finish(); // Optional: finish the current activity
+                    finish();
                 }
                 return true;
             } else if (id == R.id.nav_profile) {

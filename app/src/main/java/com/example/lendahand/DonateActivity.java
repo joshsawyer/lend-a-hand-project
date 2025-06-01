@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,19 +44,12 @@ public class DonateActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         SharedPreferences prefs = getSharedPreferences("LendAHandPrefs", MODE_PRIVATE);
-        String userId = prefs.getString("user_id", "-1"); // Default is -1 if not set
-
-        if (userId != "-1") {
-            // User is logged in
-        } else {
-            // No user found, maybe redirect to LoginActivity
-        }
+        String userId = prefs.getString("user_id", "-1");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donate);
-
         setupBottomNavigation();
-        /*getting the user data after a user on the home page was clicked on*/
+
         String name = getIntent().getStringExtra("fullName");
         String userID = getIntent().getStringExtra("userID");
 
@@ -62,33 +58,31 @@ public class DonateActivity extends BaseActivity {
             finish();
             return;
         }
-        /*CONNECTING TO SERVER USING USER-ID*/
+
+        fetchRequestorProfileImage(userID);
+
         OkHttpClient client = new OkHttpClient();
         String url = "https://lamp.ms.wits.ac.za/home/s2864063/get_user_requests.php?userID=" + userID;
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
-
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String jsonData = response.body().string();
-                    try{
+                    try {
                         JSONObject jsonObject = new JSONObject(jsonData);
 
                         String userLocation = "Lives in " + jsonObject.getString("User_Location");
                         String userPhone = "Phone Number: " + jsonObject.getString("User_Phone");
                         JSONArray requestArray = jsonObject.getJSONArray("Requests");
 
-                        ArrayList<RequestItem>  requestList = new ArrayList<>();
+                        ArrayList<RequestItem> requestList = new ArrayList<>();
                         ArrayList<String> itemNames = new ArrayList<>();
                         Map<String, Integer> amountNeededMap = new HashMap<>();
 
-                        for (int i = 0; i < requestArray.length(); i++){
+                        for (int i = 0; i < requestArray.length(); i++) {
                             JSONObject requestObject = requestArray.getJSONObject(i);
-
                             String resourceName = requestObject.getString("Resource_Name");
                             int amountRequested = requestObject.getInt("Amount_Requested");
                             int amountReceived = requestObject.getInt("Amount_Received");
@@ -100,9 +94,8 @@ public class DonateActivity extends BaseActivity {
                             int amountStillNeeded = amountRequested - amountReceived;
                             amountNeededMap.put(resourceName, amountStillNeeded);
                             itemNames.add(resourceName);
-
-
                         }
+
                         runOnUiThread(() -> {
                             TextView bioView = findViewById(R.id.LocationText);
                             bioView.setText(userLocation);
@@ -120,15 +113,14 @@ public class DonateActivity extends BaseActivity {
                             spinner.setAdapter(spinnerAdapter);
 
                             EditText amountInput = findViewById(R.id.amountInput);
-
                             Button confirmButton = findViewById(R.id.confirmButton);
+
                             confirmButton.setOnClickListener(v -> {
                                 String selectedItem = spinner.getSelectedItem().toString();
                                 int needed = amountNeededMap.get(selectedItem);
-
                                 String inputText = amountInput.getText().toString();
+
                                 if (inputText.isEmpty()) {
-                                    //Toast.makeText(DonateActivity.this, "Please enter an amount.", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
                                     intent.putExtra("userID", userID);
                                     intent.putExtra("fullName", name);
@@ -140,8 +132,7 @@ public class DonateActivity extends BaseActivity {
                                 int enteredAmount = Integer.parseInt(inputText);
 
                                 if (enteredAmount > needed) {
-                                    //Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
-                                    amountInput.setText(""); // clear field
+                                    amountInput.setText("");
                                     Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
                                     intent.putExtra("userID", userID);
                                     intent.putExtra("fullName", name);
@@ -149,11 +140,11 @@ public class DonateActivity extends BaseActivity {
                                     finish();
                                     Toast.makeText(DonateActivity.this, "You're donating too much! Only " + needed + " more needed.", Toast.LENGTH_LONG).show();
                                 } else {
-
                                     int requestID = 0;
-                                    for(int i = 0; i<requestList.size();i++) {
-                                        if(requestList.get(i).getItemName() == spinner.getSelectedItem().toString()) {
-                                            requestID = requestList.get(i).getRequestID();
+                                    for (RequestItem item : requestList) {
+                                        if (item.getItemName().equals(selectedItem)) {
+                                            requestID = item.getRequestID();
+                                            break;
                                         }
                                     }
 
@@ -173,10 +164,8 @@ public class DonateActivity extends BaseActivity {
                                     client.newCall(postRequest).enqueue(new Callback() {
                                         @Override
                                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                                            String responseStr = response.body().string();
                                             runOnUiThread(() -> {
                                                 Toast.makeText(DonateActivity.this, "Donation submitted!", Toast.LENGTH_SHORT).show();
-                                                // optionally refresh data here
                                                 Intent intent = new Intent(DonateActivity.this, SuccessActivity.class);
                                                 intent.putExtra("userID", userID);
                                                 intent.putExtra("fullName", name);
@@ -189,26 +178,21 @@ public class DonateActivity extends BaseActivity {
                                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                                             e.printStackTrace();
                                             runOnUiThread(() -> {
-                                                        Toast.makeText(DonateActivity.this, "Failed to donate", Toast.LENGTH_SHORT).show();
-                                                        Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
-                                                        intent.putExtra("userID", userID);
-                                                        intent.putExtra("fullName", name);
-                                                        startActivity(intent);
-                                                        finish();
-                                                    }
-                                            );
+                                                Toast.makeText(DonateActivity.this, "Failed to donate", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(DonateActivity.this, NosuccessActivity.class);
+                                                intent.putExtra("userID", userID);
+                                                intent.putExtra("fullName", name);
+                                                startActivity(intent);
+                                                finish();
+                                            });
                                         }
-
                                     });
                                     Toast.makeText(DonateActivity.this, "Thank you for your donation!", Toast.LENGTH_SHORT).show();
-
                                 }
                             });
-
-
                         });
-                    }
-                    catch (JSONException e){
+
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
@@ -220,16 +204,9 @@ public class DonateActivity extends BaseActivity {
             }
         });
 
-
-
         TextView nameView = findViewById(R.id.requestorName);
         nameView.setText(name);
 
-
-
-
-
-        // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Donate");
@@ -240,6 +217,42 @@ public class DonateActivity extends BaseActivity {
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
 
+    private void fetchRequestorProfileImage(String recipientUserId) {
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://lamp.ms.wits.ac.za/home/s2864063/profile.php?userID=" + recipientUserId;
+
+        Request request = new Request.Builder().url(url).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() -> Toast.makeText(DonateActivity.this, "Could not load profile image", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String json = response.body().string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        String imageUrl = jsonObject.getString("Avatar_URL");
+
+                        runOnUiThread(() -> {
+                            ImageView profileImage = findViewById(R.id.profileImage);
+                            Glide.with(DonateActivity.this)
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.ic_profile_placeholder)
+                                    .circleCrop()
+                                    .into(profileImage);
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }
+

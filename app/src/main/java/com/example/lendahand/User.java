@@ -1,6 +1,4 @@
 package com.example.lendahand;
-
-//Please feel free to alter anything here this is just a basic setup for the user class so I can get the GUI working
 public class User {
     private String userID;
     private String userBio;
